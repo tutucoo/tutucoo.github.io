@@ -20,30 +20,53 @@
     var CONFIG = {"hostname":"tutucoo.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="全平台漏洞挖掘手记">
-<meta property="og:type" content="website">
-<meta property="og:title" content="打渔为生">
-<meta property="og:url" content="http://tutucoo.github.io/index.html">
+  <meta name="description" content="GitPages搭建 创建一个仓库  2.进入blog仓库，点击settings，一直拖到最下面，可以看到Github Pages，点击Select theme，选择一个主题后返回会可以看到站点已经被开通了 hexo本地配置 安装npm后面需要npm包管理器来安装相关工具，进入下面地址进行下载 1https:&#x2F;&#x2F;nodejs.org&#x2F;en&#x2F; 查看npm版本，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Github Pages+Hexo搭建个人技术博客">
+<meta property="og:url" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/index.html">
 <meta property="og:site_name" content="打渔为生">
-<meta property="og:description" content="全平台漏洞挖掘手记">
+<meta property="og:description" content="GitPages搭建 创建一个仓库  2.进入blog仓库，点击settings，一直拖到最下面，可以看到Github Pages，点击Select theme，选择一个主题后返回会可以看到站点已经被开通了 hexo本地配置 安装npm后面需要npm包管理器来安装相关工具，进入下面地址进行下载 1https:&#x2F;&#x2F;nodejs.org&#x2F;en&#x2F; 查看npm版本，">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209094905056_19296.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209100147557_6449.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209101730477_13198.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209114422336_15713.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209114442076_10230.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209114906406_9532.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201211133105778_9633.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209142448605_26380.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209142559585_25251.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209142649052_8950.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209142714121_9764.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209142916101_30679.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209143223128_14839.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201210132117550_20918.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201210132618662_9995.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201210132758149_9077.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201211134957039_9278.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201211134454541_13271.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201210133555533_21443.png">
+<meta property="og:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201211135926436_28768.png">
+<meta property="article:published_time" content="2020-12-12T05:33:27.000Z">
+<meta property="article:modified_time" content="2020-12-12T06:02:45.787Z">
 <meta property="article:author" content="tutucoo">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209094905056_19296.png">
 
-<link rel="canonical" href="http://tutucoo.github.io/">
+<link rel="canonical" href="http://tutucoo.github.io/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>打渔为生</title>
+  <title>使用Github Pages+Hexo搭建个人技术博客 | 打渔为生</title>
   
 
 
@@ -143,9 +166,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
@@ -161,10 +185,9 @@
       <meta itemprop="name" content="打渔为生">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">使用Github Pages+Hexo搭建个人技术博客</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          使用Github Pages+Hexo搭建个人技术博客
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -188,7 +211,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="GitPages搭建"><a href="#GitPages搭建" class="headerlink" title="GitPages搭建"></a>GitPages搭建</h2><ol>
+        <h2 id="GitPages搭建"><a href="#GitPages搭建" class="headerlink" title="GitPages搭建"></a>GitPages搭建</h2><ol>
 <li>创建一个仓库<br><img src="/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209094905056_19296.png"></li>
 </ol>
 <p>2.进入blog仓库，点击settings，一直拖到最下面，可以看到Github Pages，点击Select theme，选择一个主题后返回会可以看到站点已经被开通了<br><img src="/2020/12/12/%E4%BD%BF%E7%94%A8Github-Pages-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201209100147557_6449.png"></p>
@@ -280,179 +303,30 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">INFO  Validating config</span><br><span class="line">ERROR &#123;</span><br><span class="line">  err: [Error: EISDIR: illegal operation on a directory, read] &#123;</span><br><span class="line">    errno: -21,</span><br><span class="line">    code: &#39;EISDIR&#39;,</span><br><span class="line">    syscall: &#39;read&#39;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; Plugin load failed: %s hexo-theme-landscape</span><br></pre></td></tr></table></figure>
 
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://tutucoo.github.io/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tutucoo">
-      <meta itemprop="description" content="全平台漏洞挖掘手记">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="打渔为生">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">使用GiteePages+Hugo搭建个人技术博客</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-12-08 07:24:30" itemprop="dateCreated datePublished" datetime="2020-12-08T07:24:30+08:00">2020-12-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-12-11 23:24:55" itemprop="dateModified" datetime="2020-12-11T23:24:55+08:00">2020-12-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Hugo本地搭建"><a href="#Hugo本地搭建" class="headerlink" title="Hugo本地搭建"></a>Hugo本地搭建</h2><h3 id="部署hugo工具"><a href="#部署hugo工具" class="headerlink" title="部署hugo工具"></a>部署hugo工具</h3><p>从官方下载的压缩包中，有一个hugo.exe工具，它用于hugo博客的一般操作<br>Windows下进行操作：</p>
-<ul>
-<li><p>进入官方github页下载压缩包程序<br><a target="_blank" rel="noopener" href="https://github.com/gohugoio/hugo/releases">https://github.com/gohugoio/hugo/releases</a></p>
-</li>
-<li><p>解压压缩包以后可以看到一个hugo.exe可执行程序，在环境变量中添加当前目录，使得可以在任意目录下执行hugo.exe命令</p>
-</li>
-<li><p>添加完环境变量，通过hugo version测试环境变量设置是否成功</p>
-</li>
-</ul>
-<h3 id="新建博客站点"><a href="#新建博客站点" class="headerlink" title="新建博客站点"></a>新建博客站点</h3><p>选择一个你想存放个人博客的本地目录，运行指令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo new site &quot;博客目录名称&quot;</span><br></pre></td></tr></table></figure>
-<h3 id="设置主题"><a href="#设置主题" class="headerlink" title="设置主题"></a>设置主题</h3><p>官方主题库地址：<a target="_blank" rel="noopener" href="https://themes.gohugo.io/">https://themes.gohugo.io/</a></p>
-<p>以pure主题为例：<a target="_blank" rel="noopener" href="https://themes.gohugo.io/hugo-theme-pure/">https://themes.gohugo.io/hugo-theme-pure/</a></p>
-<ul>
-<li>下载主题包后，解压后放到blog目录blog/themes目录下，并修改文件夹名为pure</li>
-<li>进入blog\themes\even\exampleSite目录，复制config.yml文件，要保证该文件内的theme字段的值跟blog/themes目录下的主题文件夹同名<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208103749042_19056.png"></li>
-</ul>
-<h3 id="发表第一篇文章"><a href="#发表第一篇文章" class="headerlink" title="发表第一篇文章"></a>发表第一篇文章</h3><p>执行下面指令，会在blog/content/posts/目录下生成test.md文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo new posts&#x2F;test.md</span><br></pre></td></tr></table></figure>
-<h3 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h3><p>执行下面命令会生成public文件夹</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo</span><br></pre></td></tr></table></figure>
-
-<h3 id="本地服务开启"><a href="#本地服务开启" class="headerlink" title="本地服务开启"></a>本地服务开启</h3><p>开启本地服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo server </span><br></pre></td></tr></table></figure>
-<p>进入localhost:1313可以在本地预览博客<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105134733_20375.png"><br>使用系统命令发表的文章默认都是草稿，打开生成的md文件会看到draft: true的标记，草稿是无法渲染的，如果要渲染包含草稿在内的所有文章需要运行下面指令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo server -D</span><br></pre></td></tr></table></figure>
+        
 
 
-<h2 id="GiteePages配置"><a href="#GiteePages配置" class="headerlink" title="GiteePages配置"></a>GiteePages配置</h2><ul>
-<li>新建仓库<br>项目名称和路径都要保持一致，全部填tutucoo（下图是搬的官方文档，没有改过来，见谅）<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105415474_21792.png"></li>
-</ul>
-<p>点击创建完成仓库的创建</p>
-<ul>
-<li>添加文件<br>点击新建文件</li>
-</ul>
-<p><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105456980_19426.png"></p>
-<p>文件名输入index.html，内容就是简单的html</p>
-<p><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105517474_21639.png" alt="26173106_Jn2d"></p>
-<p>点击提交，将文件提交到仓库</p>
-<ul>
-<li><p>选择 pages 服务<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105611845_2157.png" alt="26173423_zzeF"></p>
-</li>
-<li><p>选择需要部署的分支，这里选择 Master 启动服务。<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105627446_2733.png" alt="26173508_e3TE"></p>
-</li>
-<li><p>访问生成的网站地址，即可以查看你部署的静态页面啦！<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208105657112_9222.png" alt="26173825_h9D1"></p>
-</li>
-</ul>
-<h2 id="上传Blog到Gitee"><a href="#上传Blog到Gitee" class="headerlink" title="上传Blog到Gitee"></a>上传Blog到Gitee</h2><ul>
-<li><p>修改本地blog配置<br>blog根目录下的config.yml文件需要进行修改，地址填写自己blog的地址，注意后面要添加/<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208123754599_30374.png"></p>
-</li>
-<li><p>上传本地blog<br>进入blog根目录，执行命令初始化git仓库</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
-<p>查看当前git文件状态，可以看到很多红字，就是待添加到本地库中的文件了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
-<p>添加文件到缓存中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
-<p>发布到本地文件库中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;d&quot;   </span><br></pre></td></tr></table></figure>
-<p>添加远程仓库地址</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add https:&#x2F;&#x2F;gitee.com&#x2F;tutucoo&#x2F;tutucoo.git</span><br></pre></td></tr></table></figure>
-<p>拉取远程库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></table></figure>
-<p>此时会报错，因为之前在gitee仓库GiteePages时添加了index.html文件，导致历史信息不同<br>使用下面命令进行拉取</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master --allow-unrelated-histories</span><br></pre></td></tr></table></figure>
-<p>拉取成功后，本地出现了readme.md文件和index.html文件，删除它们，然后重新更新本地库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git add .</span><br><span class="line">git commit -m &quot;dd&quot;</span><br></pre></td></tr></table></figure>
-<p>最后push到远程gitee库中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
-<p>如果不是第一次push，可以使用下面命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>修改GiteePages目录为public<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208112646313_3109.png"><br>更新完之后，进入网站地址就可以了</li>
-</ul>
-<h2 id="图文文章"><a href="#图文文章" class="headerlink" title="图文文章"></a>图文文章</h2><p>博客的核心功能当然是管理文章啦~但是之前生成文章的方式只适合没有图片的情况，如果文章里面有图片就会非常麻烦，而且不利于每篇文章的图片单独管理，Hugo官方推荐把资源放到static目录进行引用，我觉得还是有点不方便的，我需要的是一篇文章一个文件夹，图片在文件夹下面单独存放。<br>我的方法是创建一个以文章名称命名的文件夹，文件夹内创建一个index.md文件，图片就放在这个文件夹内，引用的时候直接用图片名称就可以了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo new posts&#x2F;这是我的第一篇文章&#x2F;index.md</span><br></pre></td></tr></table></figure>
-<p>执行完上面命令，或者纯手动创建都是可以的<br>文章编辑完以后，执行编译</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hugo</span><br></pre></td></tr></table></figure>
-<p>git一条龙操作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git add .</span><br><span class="line">git commit -m &quot;tt&quot;</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
-<p>最后进入GiteePages服务点击更新按钮<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208151812762_12530.png"><br>等待片刻，更新网站，文章就发表上去了</p>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="不显示css样式"><a href="#不显示css样式" class="headerlink" title="不显示css样式"></a>不显示css样式</h3><p>浏览器中f12查看源码，在head元素里看下css加载路径是否正确<br><img src="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/20201208123933837_26103.png"></p>
-<h3 id="Gitee上传到github无法显示"><a href="#Gitee上传到github无法显示" class="headerlink" title="Gitee上传到github无法显示"></a>Gitee上传到github无法显示</h3><p>push以后Gitee没有自动更新，导致文章不显示的问题。</p>
-<ol>
-<li>GiteePages免费版不支持自动更新编译，需要手动更新，所以需要进入GiteePages服务处点击更新GiteePages服务</li>
-<li>另外，GiteePages编程Hugo的判断依据是：</li>
-</ol>
-<blockquote>
-<p>仓库编译目录下存在config.toml|json|yaml文件和content目录的时候，会使用hugo生成静态文件。</p>
-</blockquote>
-<p>配置文件的后缀千万不要弄错了，我就是把yaml错写成yml，gitee一直没有编译，导致文章一直没有更新</p>
-<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><p>将下载的主题压缩包解压，找到examplesite文件夹下的config文件，放到blog根目录下，并进行修改（不同主题修改的方式也不一样），就可以了<br>推荐主题：<br><a target="_blank" rel="noopener" href="https://github.com/dillonzq/LoveIt">https://github.com/dillonzq/LoveIt</a></p>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/08/%E4%BD%BF%E7%94%A8GiteePages-Hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" rel="prev" title="使用GiteePages+Hugo搭建个人技术博客">
+      <i class="fa fa-chevron-left"></i> 使用GiteePages+Hugo搭建个人技术博客
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
@@ -505,6 +379,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GitPages%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">GitPages搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo%E6%9C%AC%E5%9C%B0%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">hexo本地配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2Hexo%E5%88%B0Github-Pages"><span class="nav-number">3.</span> <span class="nav-text">部署Hexo到Github Pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E9%A1%B6%E7%BA%A7%E5%9F%9F%E5%90%8D"><span class="nav-number">4.</span> <span class="nav-text">绑定顶级域名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BB%88%E7%AB%AF%E5%90%8C%E6%AD%A5hexo%E6%BA%90%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">多终端同步hexo源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">文章管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="nav-number">6.1.</span> <span class="nav-text">创建文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%B8%B8%E7%94%A8%E6%A0%87%E8%AE%B0"><span class="nav-number">6.2.</span> <span class="nav-text">文章常用标记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E6%96%87%E6%B7%B7%E6%8E%92"><span class="nav-number">6.3.</span> <span class="nav-text">图文混排</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSS%E8%AE%A2%E9%98%85"><span class="nav-number">8.</span> <span class="nav-text">RSS订阅</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97"><span class="nav-number">9.</span> <span class="nav-text">错误日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#npm%E9%80%9F%E5%BA%A6%E5%A4%AA%E6%85%A2%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">9.1.</span> <span class="nav-text">npm速度太慢怎么办？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WARN-No-layout-index-html"><span class="nav-number">9.2.</span> <span class="nav-text">WARN No layout index.html</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo-butterfly%E4%B8%BB%E9%A2%98%E5%AE%89%E8%A3%85%E6%8A%A5%E9%94%99-extends-includes-layout-pug"><span class="nav-number">9.3.</span> <span class="nav-text">hexo butterfly主题安装报错:extends includes&#x2F;layout.pug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo-next%E4%B8%BB%E9%A2%98%E7%9B%AE%E5%BD%95%E6%97%A0%E6%B3%95%E8%B7%B3%E8%BD%AC"><span class="nav-number">9.4.</span> <span class="nav-text">hexo next主题目录无法跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E4%BA%86next%E4%B8%BB%E9%A2%98%EF%BC%8C%E6%8A%A5%E9%94%99-extends-%E2%80%98-layout-swig%E2%80%99"><span class="nav-number">9.5.</span> <span class="nav-text">换了next主题，报错 extends ‘_layout.swig’</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8Cnpm-install-warn-Failed-to-install-dependencies"><span class="nav-number">9.6.</span> <span class="nav-text">执行npm install warn Failed to install dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8Chexo-g-hexo-clean-hexo-d%E6%8A%A5%E9%94%99Plugin-load-failed-s-hexo-theme-landscape"><span class="nav-number">9.7.</span> <span class="nav-text">执行hexo g&#x2F;hexo clean&#x2F;hexo d报错Plugin load failed: %s hexo-theme-landscape</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
