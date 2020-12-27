@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://gitee.com/tutucoo/images/raw/master/uPic/20201210133555533_21443.png">
 <meta property="og:image" content="https://gitee.com/tutucoo/images/raw/master/uPic/20201211135926436_28768.png">
 <meta property="article:published_time" content="2020-12-12T05:33:27.000Z">
-<meta property="article:modified_time" content="2020-12-27T12:17:15.142Z">
+<meta property="article:modified_time" content="2020-12-27T12:59:23.810Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gitee.com/tutucoo/images/raw/master/uPic/20201209094905056_19296.png">
@@ -162,12 +162,14 @@
 <p>如果正常的话，此时新的文章就可以在首页上看到了，进入hexo分支，还是之前推送的源码，没有进行任何变动<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201210133555533_21443.png"></p>
 <p>因为发布了新的文章，源码也有了变动，继续将更改push到hexo分支，可以看到source文件夹中的文件成功推送了<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201211135926436_28768.png"></p>
 <p>通过这种方式实现了多终端同步</p>
-<h2 id="文章管理"><a href="#文章管理" class="headerlink" title="文章管理"></a>文章管理</h2><h3 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h3><p>对于一般的文章直接使用下面的命令就可以在source/_posts文件夹下看到新建的文章了</p>
+<h2 id="文章管理"><a href="#文章管理" class="headerlink" title="文章管理"></a>文章管理</h2><p>对于一般的文章直接使用下面的命令就可以在source/_posts文件夹下看到新建的文章了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new 文章名</span><br></pre></td></tr></table></figure>
-<h3 id="文章常用标记"><a href="#文章常用标记" class="headerlink" title="文章常用标记"></a>文章常用标记</h3><p>打开新建的文章，可以看到文件头部有title，date几个标记，除了这几个，还有一些常用的</p>
+
+<p>打开新建的文章，可以看到文件头部有title，date几个标记，除了这几个，还有一些常用的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">title:</span><br><span class="line">date:</span><br><span class="line">tags:</span><br><span class="line">description:</span><br><span class="line">categories:</span><br></pre></td></tr></table></figure>
 
-<h3 id="图文混排"><a href="#图文混排" class="headerlink" title="图文混排"></a>图文混排</h3><p>对于有图片的文章应该怎么插入图片呢？<br>一般的做法是设置配置文件post_asset_folder: true，这样每次新建文章时都会创建一个markdown以及一个同名的文件夹，该文件夹下放入图片，就可以在文章中引用图片了，但是这种方式很奇葩，引用需要使用下面的语法 </p>
+
+<h2 id="图片处理"><a href="#图片处理" class="headerlink" title="图片处理"></a>图片处理</h2><p>对于有图片的文章应该怎么插入图片呢？<br>一般的做法是设置配置文件post_asset_folder: true，这样每次新建文章时都会创建一个markdown以及一个同名的文件夹，该文件夹下放入图片，就可以在文章中引用图片了，但是这种方式很奇葩，引用需要使用下面的语法 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img image.jpg xxx %&#125;</span><br></pre></td></tr></table></figure>
 <p>可以使用hexo图片插件解决这个问题，使用正常的markdown语法引用图片<br>下载插件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-simple-image --save</span><br></pre></td></tr></table></figure>
@@ -175,29 +177,34 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
 <p>之后就可以使用标准的markdown语法引用图片了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![my post image](.&#x2F;new_post&#x2F;new_post.png)</span><br></pre></td></tr></table></figure>
-
-
+<p>使用本地图片的方式，有很多不方便的地方，因此也可以把图片单独上传到图床中。</p>
+<p>我的方案是使用gitee作为图床，方法是：</p>
+<p>1.gitee创建一个仓库，记住勾选上README</p>
+<p>2.下载uPic，配置gitee图床，填入仓库名、gitee令牌、用户名等参数，就不细说了，很简单，填完以后uPic里面有个测试的按钮，点一下就会往gitee仓库里上传一张测试图片，如果配置成功了就可以看到上传的测试图片</p>
 <h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><p>下载主题文件，放到根目录themes文件夹下，再到根目录下_config.yml文件中修改theme字段，名称跟主题文件夹名称保持一致</p>
 <h2 id="RSS订阅"><a href="#RSS订阅" class="headerlink" title="RSS订阅"></a>RSS订阅</h2><p>为了方便习惯使用订阅软件的用户，还是有必要开通RSS订阅的，订阅的用户可以第一时间收到博文的更新<br>使用npm安装hexo rss插件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-feed --save</span><br></pre></td></tr></table></figure>
 <p>根目录_config.yml文件添加一段代码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">feed:</span><br><span class="line">  enable: true</span><br><span class="line">  type: atom</span><br><span class="line">  path: atom.xml</span><br><span class="line">  limit: 20</span><br><span class="line">  hub:</span><br><span class="line">  content:</span><br><span class="line">  content_limit: 140</span><br><span class="line">  content_limit_delim: &#39; &#39;</span><br><span class="line">  order_by: -date</span><br><span class="line">  icon: icon.png</span><br><span class="line">  autodiscovery: true</span><br><span class="line">  template:</span><br></pre></td></tr></table></figure>
 <p>然后hexo g重新生成就可以了进行订阅了</p>
-<h2 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h2><h3 id="npm速度太慢怎么办？"><a href="#npm速度太慢怎么办？" class="headerlink" title="npm速度太慢怎么办？"></a>npm速度太慢怎么办？</h3><p>添加一个国内源，使用npm下载工具的时候速度会快很多</p>
+<h2 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h2><h3 id="1-npm速度太慢怎么办？"><a href="#1-npm速度太慢怎么办？" class="headerlink" title="1.npm速度太慢怎么办？"></a>1.npm速度太慢怎么办？</h3><p>添加一个国内源，使用npm下载工具的时候速度会快很多</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry https:&#x2F;&#x2F;registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-<h3 id="WARN-No-layout-index-html"><a href="#WARN-No-layout-index-html" class="headerlink" title="WARN No layout index.html"></a>WARN No layout index.html</h3><p>进行hexo s时提示没有index.html，那是因为主题文件夹名称跟根目录配置文件中theme字段的主题名称不一致</p>
-<h3 id="hexo-butterfly主题安装报错-extends-includes-layout-pug"><a href="#hexo-butterfly主题安装报错-extends-includes-layout-pug" class="headerlink" title="hexo butterfly主题安装报错:extends includes/layout.pug"></a>hexo butterfly主题安装报错:extends includes/layout.pug</h3><p>如果你没有pug以及stylus的渲染器，请下载安装：npm install hexo-renderer-jade hexo-renderer-stylus –save</p>
-<h3 id="hexo-next主题目录无法跳转"><a href="#hexo-next主题目录无法跳转" class="headerlink" title="hexo next主题目录无法跳转"></a>hexo next主题目录无法跳转</h3><p>目录使用了中文，使用英文就可以</p>
-<h3 id="换了next主题，报错-extends-‘-layout-swig’"><a href="#换了next主题，报错-extends-‘-layout-swig’" class="headerlink" title="换了next主题，报错 extends ‘_layout.swig’"></a>换了next主题，报错 extends ‘_layout.swig’</h3><p>换了next主题，hexo s后进入首页报错：</p>
+<h3 id="2-WARN-No-layout-index-html"><a href="#2-WARN-No-layout-index-html" class="headerlink" title="2.WARN No layout index.html"></a>2.WARN No layout index.html</h3><p>进行hexo s时提示没有index.html，那是因为主题文件夹名称跟根目录配置文件中theme字段的主题名称不一致</p>
+<h3 id="3-hexo-butterfly主题安装报错-extends-includes-layout-pug"><a href="#3-hexo-butterfly主题安装报错-extends-includes-layout-pug" class="headerlink" title="3.hexo butterfly主题安装报错:extends includes/layout.pug"></a>3.hexo butterfly主题安装报错:extends includes/layout.pug</h3><p>如果你没有pug以及stylus的渲染器，请下载安装：npm install hexo-renderer-jade hexo-renderer-stylus –save</p>
+<h3 id="4-hexo-next主题目录无法跳转"><a href="#4-hexo-next主题目录无法跳转" class="headerlink" title="4.hexo next主题目录无法跳转"></a>4.hexo next主题目录无法跳转</h3><p>目录使用了中文，使用英文就可以</p>
+<h3 id="5-换了next主题，报错-extends-‘-layout-swig’"><a href="#5-换了next主题，报错-extends-‘-layout-swig’" class="headerlink" title="5.换了next主题，报错 extends ‘_layout.swig’"></a>5.换了next主题，报错 extends ‘_layout.swig’</h3><p>换了next主题，hexo s后进入首页报错：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% extends &#39;_layout.swig&#39; %&#125; &#123;% import &#39;_macro&#x2F;post.swig&#39; as post_template %&#125; &#123;% import &#39;_macro&#x2F;sidebar.swig&#39; as sidebar_template %&#125; &#123;% block title %&#125;&#123;&#123; config.title &#125;&#125;&#123;% if theme.index_with_subtitle and config.subtitle %&#125; - &#123;&#123;config.subtitle &#125;&#125;&#123;% endif %&#125;&#123;% endblock %&#125; &#123;% block page_class %&#125; &#123;% if is_home() %&#125;page-home&#123;% endif -%&#125; &#123;% endblock %&#125; &#123;% block content %&#125;</span><br><span class="line">&#123;% for post in page.posts %&#125; &#123;&#123; post_template.render(post, true) &#125;&#125; &#123;% endfor %&#125;</span><br><span class="line">&#123;% include &#39;_partials&#x2F;pagination.swig&#39; %&#125; &#123;% endblock %&#125; &#123;% block sidebar %&#125; &#123;&#123; sidebar_template.render(false) &#125;&#125; &#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
-
-
 <p>原因是hexo在5.0之后把swig给删除了需要自己手动安装</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i hexo-renderer-swig</span><br></pre></td></tr></table></figure>
 <p>然后hexo c清理缓存，hexo g &amp; s 即可！</p>
-<h3 id="执行npm-install-warn-Failed-to-install-dependencies"><a href="#执行npm-install-warn-Failed-to-install-dependencies" class="headerlink" title="执行npm install warn Failed to install dependencies"></a>执行npm install warn Failed to install dependencies</h3><p>如果npm install过程中，提示npm ERR! code ETARGET，并且还有一串红字，可以尝试卸载npm，安装别的版本，重启电脑，就可以了</p>
-<h3 id="报错Plugin-load-failed-s-hexo-theme-landscape"><a href="#报错Plugin-load-failed-s-hexo-theme-landscape" class="headerlink" title="报错Plugin load failed: %s hexo-theme-landscape"></a>报错Plugin load failed: %s hexo-theme-landscape</h3><p>想换个主题，在theme文件夹下下载next主题，根目录下配置文件里面theme名称也改为next了，但执行hexo g生成时总是会报如下错误，虽然不会影响网站的正常运行，但看到Error总是不舒服，到blog根目录下，删除node_modules文件夹下的hexo-theme-landscape即可</p>
+<h3 id="6-执行npm-install-warn-Failed-to-install-dependencies"><a href="#6-执行npm-install-warn-Failed-to-install-dependencies" class="headerlink" title="6.执行npm install warn Failed to install dependencies"></a>6.执行npm install warn Failed to install dependencies</h3><p>如果npm install过程中，提示npm ERR! code ETARGET，并且还有一串红字，可以尝试卸载npm，安装别的版本，重启电脑，就可以了</p>
+<h3 id="7-报错Plugin-load-failed-s-hexo-theme-landscape"><a href="#7-报错Plugin-load-failed-s-hexo-theme-landscape" class="headerlink" title="7.报错Plugin load failed: %s hexo-theme-landscape"></a>7.报错Plugin load failed: %s hexo-theme-landscape</h3><p>想换个主题，在theme文件夹下下载next主题，根目录下配置文件里面theme名称也改为next了，但执行hexo g生成时总是会报如下错误，虽然不会影响网站的正常运行，但看到Error总是不舒服，到blog根目录下，删除node_modules文件夹下的hexo-theme-landscape即可</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">INFO  Validating config</span><br><span class="line">ERROR &#123;</span><br><span class="line">  err: [Error: EISDIR: illegal operation on a directory, read] &#123;</span><br><span class="line">    errno: -21,</span><br><span class="line">    code: &#39;EISDIR&#39;,</span><br><span class="line">    syscall: &#39;read&#39;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; Plugin load failed: %s hexo-theme-landscape</span><br></pre></td></tr></table></figure>
+<h2 id="8-hexo发生error：spawn-failed错误的解决方法"><a href="#8-hexo发生error：spawn-failed错误的解决方法" class="headerlink" title="8.hexo发生error：spawn failed错误的解决方法"></a>8.hexo发生error：spawn failed错误的解决方法</h2><ol>
+<li>删除<code>.deploy_git</code>文件夹;</li>
+<li>输入<code>git config --global core.autocrlf false</code></li>
+<li>然后，依次执行：<br><code>hexo clean</code><br><code>hexo g</code><br><code>hexo d</code></li>
+</ol>
 
       
     </div>
