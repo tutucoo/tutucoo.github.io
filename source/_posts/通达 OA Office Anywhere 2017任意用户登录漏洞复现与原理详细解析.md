@@ -1,6 +1,7 @@
 ---
 title: 通达 OA Office Anywhere 2017任意用户登录漏洞复现与原理详细解析
 date: 2020-12-18 11:58:29
+cover: https://gitee.com/tutucoo/images/raw/master/uPic/Vt3czS.jpg
 ---
 ## 漏洞概述
 通达OA系统采用领先的B/S(浏览器/服务器)操作方式，使得网络办公不受地域限制。

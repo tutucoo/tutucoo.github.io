@@ -1,6 +1,7 @@
 ---
 title: 使用Github Pages+Hexo搭建个人技术博客
 date: 2020-12-12 13:33:27
+cover: https://gitee.com/tutucoo/images/raw/master/uPic/gXXWRP.jpg
 ---
 
 ## GitPages搭建
@@ -245,7 +246,11 @@ npm config set registry https://registry.npm.taobao.org
 
 ### 3.hexo butterfly主题安装报错:extends includes/layout.pug
 
-如果你没有pug以及stylus的渲染器，请下载安装：npm install hexo-renderer-jade hexo-renderer-stylus --save
+如果你没有pug以及stylus的渲染器，请下载安装：
+
+```
+npm install hexo-renderer-jade hexo-renderer-stylus --save
+```
 
 ### 4.hexo next主题目录无法跳转
 
@@ -285,7 +290,7 @@ ERROR {
 } Plugin load failed: %s hexo-theme-landscape
 ```
 
-## 8.hexo发生error：spawn failed错误的解决方法
+### 8.hexo发生error：spawn failed错误的解决方法
 
 1. 删除`.deploy_git`文件夹;
 2. 输入`git config --global core.autocrlf false`

@@ -1,6 +1,7 @@
 ---
 title: "使用GiteePages+Hugo搭建个人技术博客"
 date: 2020-12-08T15:24:30+08:00
+cover: https://gitee.com/tutucoo/images/raw/master/uPic/xmjyJu.jpg
 ---
 
 
