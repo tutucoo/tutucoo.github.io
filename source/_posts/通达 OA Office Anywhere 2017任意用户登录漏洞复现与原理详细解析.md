@@ -35,38 +35,38 @@ Windows 10 教育版（攻击机）
 
 经过测试，使用app扫码登录时，可以捕获到/logincheck_code.php这一条数据包。
 
-  ![](20201218222452591_18400.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218222452591_18400.png)
 
 2. 该请求成功后会返回一个管理员cookie
 
 3. 访问后台
      后台首页地址是：http://192.168.3.116/general/index.php?isIE=0&modify_pwd=0，直接带上上一步返回的cookie访问该地址，就实现了任意用户登录了，权限是系统管理员
-       ![](20201218223410777_1046.png)
+       ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218223410777_1046.png)
 ## 漏洞原理
 通过漏洞复现，可以得知，漏洞点存在于logincheck_code.php，解密源码后找到logincheck_code.php
 可以看到UID参数可控，通过POST请求获取
-![](20201218211816972_32338.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218211816972_32338.png)
 
 然后会根据UID获取数据库中的数据
 
-![](20201218223521831_25668.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218223521831_25668.png)
 
 判断是否是被禁用户
 
-![](20201218223619974_23797.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218223619974_23797.png)
 
 记录被ban用户尝试登录次数
 
-![](20201218223825516_24615.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218223825516_24615.png)
 
 被ban用户第一次登录会收到提醒，第二次以后会设置ban的过期时间
 
-![](20201218224021687_9206.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218224021687_9206.png)
 
 之后都是一些多端登录之类的操作，有兴趣可以自己看一看，关键的还是在后面。
 180行可以看到UID被保存到session中，这样，有可控参数，并且这个可控参数会被保存到session，这就可能存在任意用户登录了，我们可以合理猜测，只要构造一个管理员UID，系统就会通过cookie返回管理员的sessionid，之后再通过该sessionid登录就可以实现任意用户登录了。
 
-![](20201218212335531_14646.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218212335531_14646.png)
 
 网上看到该地址存在的漏洞需要构造UID=1&CODEUID=_PC{xxxxxxxx}，并通过访问/ispirit/login_code.php获取codeuid，但是通过查看通达2017源码可以看到，它并没有检测codeuid，直接构造一个UID即可
 
@@ -74,7 +74,7 @@ Windows 10 教育版（攻击机）
 
 ## 总结
 从白盒角度来看，可以通过源码中找到可控输入参数，如果这个参数还会被保存为session，就可以猜测存在任意用户登录。
-通过源码构造poc，这里是通过POST接收参数，因此请求采用POST，另外需要UID，可以合理猜测UID=1是管理员，这也可通过本地数据库进行验证，从我的另一篇博客文章也可以证明这一点：https://tutucoo.gitee.io/%E9%80%9A%E8%BE%BE-oa-office-anywhere-v11%E4%BB%BB%E6%84%8F%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E4%B8%8E%E5%8E%9F%E7%90%86%E8%AF%A6%E7%BB%86%E8%A7%A3%E6%9E%90/#5-%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86
+通过源码构造poc，这里是通过POST接收参数，因此请求采用POST，另外需要UID，可以合理猜测UID=1是管理员，这也可通过本地数据库进行验证。
 
 POST请求通常还需要请求头Content-Type，Content-Type有以下几种类型：
 

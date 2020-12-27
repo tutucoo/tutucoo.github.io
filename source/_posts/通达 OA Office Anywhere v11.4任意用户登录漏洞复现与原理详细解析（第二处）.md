@@ -39,36 +39,36 @@ GET请求改为POST请求
 
 
 
-![](20201219101708128_5207.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219101708128_5207.png)
 
 这个请求一般会返回status 1
 
-  ![](20201219102012280_28610.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219102012280_28610.png)
 
   第三步：访问/ispirit/login_code_check.php?codeuid={xxx}
 
-  ![](20201219102123533_12814.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219102123533_12814.png)
 
   如果请求正常，会返回如下图所示数据 
-  ![](20201219102401024_13617.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219102401024_13617.png)
 
 第四步：访问/general/index.php，顺利登录后台，权限是系统管理员，实现任意用户登录
-  ![](20201219102509925_13991.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219102509925_13991.png)
 
 
 
 ## 漏洞原理
 
 漏洞地址存在于general/login_code_scan.php，进入解密后的源码处查看代码，可以看到通过POST请求接收5个参数，然后存到数组里，uid可控，没有对uid进行任何校验，这就产生了漏洞
-![](20201219104350520_5847.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219104350520_5847.png)
 
 这里会检测codeuid，如果codeuid存在并且正确会返回1
 
-![](20201219104600278_30979.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219104600278_30979.png)
 
 再后面就没有任何检测了，直接在返回包里返回status
 
-![](20201219105133157_30970.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219105133157_30970.png)
 
 漏洞点要发送5个参数，分别是codeuid，source，uid，type，username
 
@@ -85,7 +85,7 @@ GET请求改为POST请求
   校验很可能存在的位置就是下一个步骤，也就是访问/ispirit/login_code_check.php?codeuid={xxx}，找到源码进行查看。
 可以看到15行对type进行判断
 
-![](20201219170612652_23176.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219170612652_23176.png)
 
   
 
@@ -93,7 +93,7 @@ GET请求改为POST请求
 
 
 
-![](20201219170917295_8923.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201219170917295_8923.png)
 
 
 
@@ -101,9 +101,9 @@ GET请求改为POST请求
 
 找到v11.5版本的general/login_code_scan.php文件，可以看到不再直接从UID参数中取UID了，而是通过P参数获取sessionid，再通过sessionid获取数据库中的UID，再通过UID等信息生成TOKEN，最后再通过TOKEN等信息生成缓存，这样就解决了UID可控的问题了
 
-![image-20201219215830050](image-20201219215830050.png)
+![image-20201219215830050](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201219215830050.png)
 
-![image-20201219221115596](D:\tutucoo\content\posts\通达 OA Office Anywhere v11.4任意用户登录漏洞复现与原理详细解析（第二处）\image-20201219221115596.png)
+![image-20201219221115596](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201219221115596.png)
 
 ## 总结
 该漏洞点存在于general/login_code_scan.php，需要传递5个参数，分别是codeuid、source、uid、type、username、其中codeuid需要发送ispirit/login_code.php请求获取，其他几个参数通过分析源码我们也都知道了，唯独还有/ispirit/login_code_check.php?codeuid={xxx}请求，不知道是从何而来，可能是通过黑盒测试，二维码扫描过程中抓到的吧，也就是个猜测，自己通过APP扫码登录出了点问题，就不再细说了。

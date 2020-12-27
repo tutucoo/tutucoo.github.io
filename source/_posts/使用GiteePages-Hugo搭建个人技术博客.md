@@ -36,7 +36,7 @@ hugo
 hugo server 
 ```
 进入localhost:1313可以在本地预览博客
-![](20201208105134733_20375.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105134733_20375.png)
 使用系统命令发表的文章默认都是草稿，打开生成的md文件会看到draft: true的标记，草稿是无法渲染的，如果要渲染包含草稿在内的所有文章需要运行下面指令
 
 ```
@@ -51,7 +51,7 @@ hugo server -D
 
 * 下载主题包后，解压后放到blog目录blog/themes目录下，并修改文件夹名为pure
 * 进入blog\themes\even\exampleSite目录，复制config.yml文件，要保证该文件内的theme字段的值跟blog/themes目录下的主题文件夹同名
-  ![](20201208103749042_19056.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208103749042_19056.png)
 
 
 推荐主题：
@@ -70,35 +70,35 @@ hugo new posts/test.md
 ## GiteePages配置
 * 新建仓库
   项目名称和路径都要保持一致，全部填tutucoo（下图是搬的官方文档，没有改过来，见谅）
-  ![](20201208105415474_21792.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105415474_21792.png)
 
 点击创建完成仓库的创建
 
 * 添加文件
   点击新建文件
 
-![](20201208105456980_19426.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105456980_19426.png)
 
 文件名输入index.html，内容就是简单的html
 
-![26173106_Jn2d](20201208105517474_21639.png)
+![26173106_Jn2d](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105517474_21639.png)
 
 点击提交，将文件提交到仓库
 
 * 选择 pages 服务
-  ![26173423_zzeF](20201208105611845_2157.png)
+  ![26173423_zzeF](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105611845_2157.png)
 
 * 选择需要部署的分支，这里选择 Master 启动服务。
-  ![26173508_e3TE](20201208105627446_2733.png)
+  ![26173508_e3TE](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105627446_2733.png)
 
 * 访问生成的网站地址，即可以查看你部署的静态页面啦！
-  ![26173825_h9D1](20201208105657112_9222.png)
+  ![26173825_h9D1](https://gitee.com/tutucoo/images/raw/master/uPic/20201208105657112_9222.png)
 
 ## 上传Blog到Gitee
 
 * 修改本地blog配置
   blog根目录下的config.yml文件需要进行修改，地址填写自己blog的地址，注意后面要添加/
-  ![](20201208123754599_30374.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208123754599_30374.png)
 
 * 上传本地blog
   进入blog根目录，执行命令初始化git仓库
@@ -147,7 +147,7 @@ git push
 ```
 
 * 修改GiteePages目录为public
-  ![](20201208112646313_3109.png)
+  ![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208112646313_3109.png)
   更新完之后，进入网站地址就可以了
 
 
@@ -172,7 +172,7 @@ git commit -m "tt"
 git push
 ```
 最后进入GiteePages服务点击更新按钮
-![](20201208151812762_12530.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208151812762_12530.png)
 等待片刻，更新网站，文章就发表上去了
 
 
@@ -183,15 +183,15 @@ git push
 
 首先，去leancloud.app注册个账号，找到里面的应用keys
 
-![image-20201213010629384](image-20201213010629384.png)
+![image-20201213010629384](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201213010629384.png)
 
 再到blog根目录下找到config.toml，找到[params.page.comment.valine]，将appId和appKey填入，enable设置为true，其他的参数不需要设置
 
-![image-20201213010505669](image-20201213010505669.png)
+![image-20201213010505669](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201213010505669.png)
 
 然后再进入到leancloud的存储页中，创建两个Class，一个是Comment用于接收评论，另一个是Counter，用于统计文章访问次数
 
-![image-20201213010936233](image-20201213010936233.png)
+![image-20201213010936233](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201213010936233.png)
 
 最后，本地进行调试，注意要切换到发布版，否则看不到评论系统
 
@@ -203,7 +203,7 @@ hugo server -e production
 
 再看文章阅读次数，也有了变化！
 
-![image-20201213011459581](image-20201213011459581.png)
+![image-20201213011459581](https://gitee.com/tutucoo/images/raw/master/uPic/image-20201213011459581.png)
 
 
 
@@ -214,7 +214,7 @@ hugo server -e production
 ### 不显示css样式
 
 浏览器中f12查看源码，在head元素里看下css加载路径是否正确，如果不正确，需要在配置文件里面进行设置
-![](20201208123933837_26103.png)
+![](https://gitee.com/tutucoo/images/raw/master/uPic/20201208123933837_26103.png)
 
 ### Gitee上传到github无法显示
 push以后Gitee没有自动更新，导致文章不显示的问题。
