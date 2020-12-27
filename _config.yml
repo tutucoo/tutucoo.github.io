@@ -5,11 +5,11 @@
 # Site
 title: 打渔为生
 subtitle: 'tutucoo的技术笔记'
-description: ''
-keywords:
+description: '全平台漏洞挖掘手记'
+keywords: Web漏洞,二进制漏洞,移动安全
 author: tutucoo
 language: zh-CN
-timezone: ''
+timezone: 'Asia/Shanghai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
