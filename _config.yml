@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle: ''
+title: 打渔为生
+subtitle: 'tutucoo的技术笔记'
 description: ''
 keywords:
-author: John Doe
-language: en
+author: tutucoo
+language: zh-CN
 timezone: ''
 
 # URL
@@ -41,10 +41,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: true
-marked:
-	prependRoot: true
-	postAsset: true
+post_asset_folder: false
 relative_link: false
 future: true
 highlight:
@@ -101,7 +98,14 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: butterfly
+plugins:
+	hexo-generator-feed
+
+feed:
+	type: atom
+	path: atom.xml
+	limit: 20
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment

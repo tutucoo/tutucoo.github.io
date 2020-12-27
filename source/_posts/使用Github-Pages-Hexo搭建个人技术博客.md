@@ -215,19 +215,14 @@ npm install hexo-generator-feed --save
 ```
 根目录_config.yml文件添加一段代码
 ```
+# Extensions
+plugins:
+  hexo-generator-feed
+#Feed Atom
 feed:
-  enable: true
   type: atom
   path: atom.xml
   limit: 20
-  hub:
-  content:
-  content_limit: 140
-  content_limit_delim: ' '
-  order_by: -date
-  icon: icon.png
-  autodiscovery: true
-  template:
 ```
 然后hexo g重新生成就可以了进行订阅了
 
