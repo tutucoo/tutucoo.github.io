@@ -1,5 +1,5 @@
 ---
-title: YCCMS V3 4存在XSS漏洞
+title: YCCMS V3.4存在XSS漏洞
 date: 2021-04-17 15:50:57
 cover: https://i.loli.net/2021/04/17/CS146wha5HeK72p.png
 ---
