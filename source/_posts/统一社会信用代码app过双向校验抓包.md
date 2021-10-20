@@ -56,7 +56,7 @@ setImmediate(main);
 
 ![Untitled](https://i.loli.net/2021/10/20/lpPKmbI9aWZRFSt.png)
 
-导入p12证书后仍然抓不到包，根据提示，客户端对服务器也进行了校验，可以通过hook ssl来绕过
+导入p12证书后仍然抓不到包，根据提示，客户端对服务器也进行了校验，可以通过hook ssl来绕过ssl pinning
 
 ![Untitled](https://i.loli.net/2021/10/20/9ye5Mn6VxGc3iSD.png)
 
