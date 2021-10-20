@@ -58,7 +58,7 @@ function main(){
 setImmediate(main);
 ```
 
-成功hook后，会将p12文件写入到sdcard中，adb pull出来就可以了，如果pull失败可以对p12文件进行压缩
+成功hook后，会将p12文件写入到sdcard中，adb pull出来就可以了，如果pull失败可以对p12改名，可能是文件名有多个后缀造成的
 
 这里获取到密钥是：}%2R+\OSsjpP!w%X
 
