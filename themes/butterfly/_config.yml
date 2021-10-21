@@ -615,7 +615,7 @@ aside:
       link: https://github.com/tutucoo
   card_announcement:
     enable: true
-    content: This is my Blog
+    content: 如有问题请联系我：tutucoowx(微信号)
   card_recent_post:
     enable: true
     limit: 5 # if set 0 will show all
