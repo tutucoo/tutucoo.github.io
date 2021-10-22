@@ -98,7 +98,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: butterfly
+theme: polk
 plugins:
 	hexo-generator-feed
 
@@ -111,5 +111,5 @@ feed:
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: 'git'
-  repo: git@github.com:tutucoo/tutucoo.github.io.git
+  repo: https://github.com/tutucoo/tutucoo.github.io.git
   branch: main
