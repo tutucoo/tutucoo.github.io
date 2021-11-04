@@ -1,5 +1,5 @@
 ---
-title: yccms v3.4代码执行漏洞
+title: web漏洞@yccms v3.4代码执行漏洞
 date: 2021-04-18 17:17:19
 cover: https://i.loli.net/2021/04/18/U6I7rfGqCmDk52i.png
 ---

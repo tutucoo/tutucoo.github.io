@@ -1,5 +1,5 @@
 ---
-title: 通达 OA Office Anywhere 2017任意用户登录漏洞复现与原理详细解析
+title: web漏洞@通达 OA Office Anywhere 2017任意用户登录漏洞复现与原理详细解析
 date: 2020-12-18 11:58:29
 cover: https://gitee.com/tutucoo/images/raw/master/uPic/Vt3czS.jpg
 ---
@@ -86,7 +86,6 @@ text/plain 空格转换为 "+" 加号，但不对特殊字符编码。
 ```
 通常测试任意用户登录使用的是x-www-form-urlencoded，此外，还可以测试带上Content-Length: 100，有时候服务器会对该字段进行检测。
 从黑盒的角度来看，如果在测试过程中看到login_code_check这样的地址，看英文意思也能猜出是用于登录检测了，那么就是任意用户登录高发的位置了，如果请求体中还包含了UID，不妨试一下UID=1，再通过返回的cookie直接访问后台地址，如果可以正常访问，那么就是任意用户登录了。
-
 
 
 

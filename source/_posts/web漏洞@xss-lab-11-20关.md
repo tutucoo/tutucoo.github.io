@@ -1,5 +1,5 @@
 ---
-title: xss-lab 11-20关
+title: web漏洞@xss-lab 11-20关
 date: 2021-04-19 10:05:55
 cover: https://i.loli.net/2021/04/19/jJxAgq9OBnpksad.jpg
 ---

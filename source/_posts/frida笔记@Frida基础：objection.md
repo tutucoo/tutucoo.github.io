@@ -1,5 +1,5 @@
 ---
-title: Frida笔记二： objection
+title: frida笔记@Frida基础： objection
 date: 2021-10-09 11:06:12
 cover: https://i.loli.net/2021/10/09/mQc3S9s8xNifOJP.jpg
 ---

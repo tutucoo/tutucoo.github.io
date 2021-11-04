@@ -1,5 +1,5 @@
 ---
-title: 记一次Linux内网渗透测试
+title: web漏洞@记一次Linux内网渗透测试
 date: 2021-10-03 20:10:03
 cover: https://gitee.com/tutucoo/images/raw/master/uPic/cute_cottage_on_a_cliff_in_the_woods_and_th____by_raphaelle_deslandes_demul7k-fullview.jpg
 ---

@@ -1,5 +1,5 @@
 ---
-title: yccms v3.4 csrf漏洞
+title: web漏洞@yccms v3.4 csrf漏洞
 date: 2021-04-17 16:31:22
 cover: https://i.loli.net/2021/04/17/Tnoa3sSO2prCYb7.png
 ---

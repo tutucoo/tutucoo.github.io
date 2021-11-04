@@ -1,5 +1,5 @@
 ---
-title: xss-lab 1-10关
+title: web漏洞@xss-lab 1-10关
 date: 2021-04-19 09:52:14
 cover: https://gitee.com/tutucoo/images/raw/master/uPic/GURdwk.jpg
 ---

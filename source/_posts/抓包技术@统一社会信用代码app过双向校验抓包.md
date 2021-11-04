@@ -1,14 +1,10 @@
 ---
-title: Soul过客户端证书检测抓包
-date: 2021-10-20 15:45:18
-cover: https://i.loli.net/2021/10/20/Zn8BCOv5G4zf3wy.jpg
+title: 抓包技术@统一社会信用代码app过双向校验抓包
+date: 2021-10-20 16:40:14
+cover: https://i.loli.net/2021/10/20/CKRUBSziD5mawvr.jpg
 ---
 
-使用charles对soul进行抓包提示服务器拒绝连接，猜测是服务端通过p12证书对客户端进行校验 
-
-![Untitled](https://i.loli.net/2021/10/20/tDvJ7XKrYCh1Hwu.png)
-
-一般这种情况使用frida脚本对KeyStore进行hook，把p12写到sdcard中并获取密钥
+hook找到证书密码并导出p12证书
 
 ```jsx
 function hook_KeyStore_load() {
@@ -53,25 +49,42 @@ function hook_KeyStore_load() {
 }
 
 function main(){
-    hook_KeyStore_load()    
+    hook_ssl()
 }
 setImmediate(main);
 ```
 
-成功hook后，会将p12文件写入到sdcard中，adb pull出来就可以了，如果pull失败可以对p12改名，可能是文件名有多个后缀造成的
+![Untitled](https://i.loli.net/2021/10/20/lpPKmbI9aWZRFSt.png)
 
-这里获取到密钥是：}%2R+\OSsjpP!w%X
+导入p12证书后仍然抓不到包，根据提示，客户端对服务器也进行了校验，可以通过hook ssl来绕过ssl pinning
 
-![Untitled](https://i.loli.net/2021/10/20/SWZEcYnIhD7XFpd.png)
+![Untitled](https://i.loli.net/2021/10/20/9ye5Mn6VxGc3iSD.png)
 
-进入Charles，打开SSL Proxying Settings，添加一个客户端证书，导入p12并按要求输入密码
+对ssl进行hook，对所有重载函数都置空
 
-之后再设置主机白名单
+```jsx
+function hook_ssl() {
+    Java.perform(function() {
+        var ClassName = "com.android.org.conscrypt.Platform";
+        var Platform = Java.use(ClassName);
+        var targetMethod = "checkServerTrusted";
+        var len = Platform[targetMethod].overloads.length;
+        console.log(len);
+        for(var i = 0; i < len; ++i) {
+            Platform[targetMethod].overloads[i].implementation = function () {
+                console.log("class:", ClassName, "target:", targetMethod, " i:", i, arguments);
+                //printStack(ClassName + "." + targetMethod);
+            }
+        }
+    });
+}
 
-![Untitled](https://i.loli.net/2021/10/20/ymnVWHKPJhSt2i1.png)
+function main(){
+    hook_ssl()
+}
+setImmediate(main);
+```
 
-成功抓取soul数据包
+成功绕过双向校验
 
-![Untitled](https://i.loli.net/2021/10/20/KiRnWfM7cLtVm6C.png)
-
-![Untitled](https://i.loli.net/2021/10/20/zHeOjyfxQgqVmXL.png)
+![Untitled](https://i.loli.net/2021/10/20/k35iGMmZQ9HjPn2.png)

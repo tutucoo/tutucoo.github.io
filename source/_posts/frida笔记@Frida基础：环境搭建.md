@@ -1,5 +1,5 @@
 ---
-title: Frida笔记一：环境搭建
+title: frida笔记@Frida基础：环境搭建
 date: 2021-10-08 15:59:12
 cover: https://i.loli.net/2021/10/08/eaYgl3RL2izHDKJ.jpg
 ---
