@@ -111,5 +111,5 @@ feed:
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: 'git'
-  repo: https://github.com/tutucoo/tutucoo.github.io.git
+  repo: git@github.com:tutucoo/tutucoo.github.io.git
   branch: main
