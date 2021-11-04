@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>通达 OA Office Anywhere 2017任意用户登录漏洞复现与原理详细解析 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">通达 OA Office Anywhere 2017任意用户登录漏洞复现与原理详细解析</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%BF%B0"><span class="toc-text">漏洞概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83"><span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+
+  <div class="post-content">
+    <h2 id="漏洞概述"><a href="#漏洞概述" class="headerlink" title="漏洞概述"></a>漏洞概述</h2><p>通达OA系统采用领先的B/S(浏览器/服务器)操作方式，使得网络办公不受地域限制。<br>Office Anywhere采用基于WEB的企业计算，主HTTP服务器采用了世界上最先进的<br>Apache服务器，性能稳定可靠。数据存取集中控制，避免了数据泄漏的可能。提供数据备份工具，保护系统数据安全。多级的权限控制，完善的密码验证与登录验证机制更加强了系统安全性。</p>
+<p>未经授权的攻击者通过构造请求包实现用户登录，又由于UID是主键且步进为1递增，从而导致可以指定UID实现任意用户登录（admin的缺省UID为1）。</p>
+<h2 id="漏洞环境"><a href="#漏洞环境" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><p><strong>官网</strong>：<a target="_blank" rel="noopener" href="https://www.tongda2000.com/">https://www.tongda2000.com/</a></p>
+<p><strong>下载</strong>：链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1RLoz7wUZc0Hr9S7aBoxYew">https://pan.baidu.com/s/1RLoz7wUZc0Hr9S7aBoxYew</a>  提取码：thcz </p>
+<p><strong>版本</strong>：<br>通达OA 2017版</p>
+<p><strong>测试系统</strong>：<br>Windows 7 家庭版 64位操作系统<br>Windows 10 教育版（攻击机）</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><ol>
+<li><p>使用burp拦截，访问/logincheck_code.php，burp断下后修改如下：</p>
+<p>a) GET请求修改为POST请求</p>
+<p>b) 删除Cookie字段</p>
+<p>c）添加请求体UID=1</p>
+<p>d) 添加Content-Type: application/x-www-form-urlencoded</p>
+</li>
+</ol>
+<p>经过测试，使用app扫码登录时，可以捕获到/logincheck_code.php这一条数据包。</p>
+<p>  <img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218222452591_18400.png"></p>
+<ol start="2">
+<li><p>该请求成功后会返回一个管理员cookie</p>
+</li>
+<li><p>访问后台<br>  后台首页地址是：<a target="_blank" rel="noopener" href="http://192.168.3.116/general/index.php?isIE=0&amp;modify_pwd=0%EF%BC%8C%E7%9B%B4%E6%8E%A5%E5%B8%A6%E4%B8%8A%E4%B8%8A%E4%B8%80%E6%AD%A5%E8%BF%94%E5%9B%9E%E7%9A%84cookie%E8%AE%BF%E9%97%AE%E8%AF%A5%E5%9C%B0%E5%9D%80%EF%BC%8C%E5%B0%B1%E5%AE%9E%E7%8E%B0%E4%BA%86%E4%BB%BB%E6%84%8F%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E4%BA%86%EF%BC%8C%E6%9D%83%E9%99%90%E6%98%AF%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98">http://192.168.3.116/general/index.php?isIE=0&amp;modify_pwd=0，直接带上上一步返回的cookie访问该地址，就实现了任意用户登录了，权限是系统管理员</a></p>
+<pre><code>![](https://gitee.com/tutucoo/images/raw/master/uPic/20201218223410777_1046.png)</code></pre>
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>通过漏洞复现，可以得知，漏洞点存在于logincheck_code.php，解密源码后找到logincheck_code.php<br>可以看到UID参数可控，通过POST请求获取<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218211816972_32338.png"></p>
+</li>
+</ol>
+<p>然后会根据UID获取数据库中的数据</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218223521831_25668.png"></p>
+<p>判断是否是被禁用户</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218223619974_23797.png"></p>
+<p>记录被ban用户尝试登录次数</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218223825516_24615.png"></p>
+<p>被ban用户第一次登录会收到提醒，第二次以后会设置ban的过期时间</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218224021687_9206.png"></p>
+<p>之后都是一些多端登录之类的操作，有兴趣可以自己看一看，关键的还是在后面。<br>180行可以看到UID被保存到session中，这样，有可控参数，并且这个可控参数会被保存到session，这就可能存在任意用户登录了，我们可以合理猜测，只要构造一个管理员UID，系统就会通过cookie返回管理员的sessionid，之后再通过该sessionid登录就可以实现任意用户登录了。</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20201218212335531_14646.png"></p>
+<p>网上看到该地址存在的漏洞需要构造UID=1&amp;CODEUID=_PC{xxxxxxxx}，并通过访问/ispirit/login_code.php获取codeuid，但是通过查看通达2017源码可以看到，它并没有检测codeuid，直接构造一个UID即可</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从白盒角度来看，可以通过源码中找到可控输入参数，如果这个参数还会被保存为session，就可以猜测存在任意用户登录。<br>通过源码构造poc，这里是通过POST接收参数，因此请求采用POST，另外需要UID，可以合理猜测UID=1是管理员，这也可通过本地数据库进行验证。</p>
+<p>POST请求通常还需要请求头Content-Type，Content-Type有以下几种类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">application&#x2F;x-www-form-urlencoded 在发送前编码所有字符（默认）</span><br><span class="line">multipart&#x2F;form-data 不对字符编码,在使用包含文件上传控件的表单时，必须使用该值。</span><br><span class="line">text&#x2F;plain 空格转换为 &quot;+&quot; 加号，但不对特殊字符编码。</span><br></pre></td></tr></table></figure>
+<p>通常测试任意用户登录使用的是x-www-form-urlencoded，此外，还可以测试带上Content-Length: 100，有时候服务器会对该字段进行检测。<br>从黑盒的角度来看，如果在测试过程中看到login_code_check这样的地址，看英文意思也能猜出是用于登录检测了，那么就是任意用户登录高发的位置了，如果请求体中还包含了UID，不妨试一下UID=1，再通过返回的cookie直接访问后台地址，如果可以正常访问，那么就是任意用户登录了。</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2020-12-18</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

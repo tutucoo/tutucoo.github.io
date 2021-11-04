@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>PCMan FTP Server 2.0.7远程缓冲区溢出 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">PCMan FTP Server 2.0.7远程缓冲区溢出</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PCMan-FTP-Server-2-0-7%E8%BF%9C%E7%A8%8B%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA"><span class="toc-text">PCMan FTP Server 2.0.7远程缓冲区溢出</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="PCMan-FTP-Server-2-0-7远程缓冲区溢出"><a href="#PCMan-FTP-Server-2-0-7远程缓冲区溢出" class="headerlink" title="PCMan FTP Server 2.0.7远程缓冲区溢出"></a>PCMan FTP Server 2.0.7远程缓冲区溢出</h1><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>pcman：进入这个地址下载<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/26471">https://www.exploit-db.com/exploits/26471/</a></p>
+<p>python 2.7.0</p>
+<p>windows 7 64位 专业版</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>启动PCMan后，执行poc，PCMan崩溃</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.connect((&quot;192.168.3.163&quot;,21))</span><br><span class="line">s.recv(1024)</span><br><span class="line">User &#x3D; &#39;anonymous&#39;</span><br><span class="line">Password &#x3D; &#39;A&#39;*8000</span><br><span class="line">s.send(&quot;USER&quot; + User + &quot;\r\n&quot;)</span><br><span class="line">print s.recv(1024)</span><br><span class="line">s.send(&quot;PASS&quot; + Password + &quot;\r\n&quot;)</span><br><span class="line">print s.recv(1024)</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/NgP7Hx8bhBYK3a6-20210121105455985.png"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>用Windbg挂载pcman之后，执行poc，Windbg会断下，可以看到eip的值是41414141，产生了缓冲区溢出</p>
+<p>poc中调用了send函数，pcman很可能是通过recv来接收数据的，在IDA中查看recv函数调用的情况，可以看到有两处调用</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/1730632840271.png"></p>
+<p>在Windbg中这两处函数调用下断点，然后执行poc</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2828561526913.png"></p>
+<p>程序在recv处会断下四次，第四次断下后再执行程序就会产生崩溃，所以需要在第三次断下之后单步进行调试，单步执行完402a26(调用sub_403e60)时程序崩溃，所以需要进入这个函数，接下来通过这种方式一步步靠近最终导致崩溃的函数</p>
+<p>第四次在402a26处断下时，dd esp查看堆栈情况<br>可以看到函数返回地址是402a2b，此时返回地址还是正常的，函数执行完会跳到这个地址继续执行指令<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2725184152125.png"></p>
+<p>看一下402a2b的地址，正是sub_403e60的下一条指令</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/47561302131.png"></p>
+<p>继续执行到403ee6处，也就是_sprintf函数的位置，在还没有执行_sprintf函数时，dd 18ed68查看堆栈，可以看到函数返回地址仍然是402a2b，执行完_sprintf函数，可以看到函数返回地址已经被冲刷成41414141了，这会造成函数在返回时跳转到41414141接着执行，而41414141是一个非法的地址，程序因此会崩溃，可能是由于_sprintf函数在执行时没有控制源字符串的大小，导致过长的字符串冲刷掉了函数返回地址</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/431792199120.png"></p>
+<p>我们可以通过观察sprintf函数执行前后内存变化来印证这一点<br>_sprintf函数的第一个参数是目地缓冲区，用于保存拼接的字符串，这个参数保存在寄存器ecx中<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/5428838106174.png"></p>
+<p>查看ecx的地址18E568，这里保存了sprintf函数的10个参数，可以看到第10个参数是超长的字符串<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/5049600201308.png"></p>
+<p>对应ida里面的a2参数，a2就是传进来的超长字符串<br><img src="https://gitee.com/tutucoo/images/raw/master/uPic/3229776791168.png"></p>
+<p>执行完sprintf函数之后，函数返回地址被冲刷了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/5632851706756.png"></p>
+<p>再接着往下执行，单步到ret 4处，ret 4等同于</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add esp 4</span><br><span class="line">jmp 返回地址</span><br></pre></td></tr></table></figure>
+<p>此时返回地址已经被冲刷为41414141了，所以jmp 到返回地址时，程序崩溃</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2544833597577.png"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过这个漏洞的复现，我们可以反推漏洞挖掘的过程</p>
+<p>通过wireshark抓包（ftp数据包需要选择正确的本地以太网卡，否则ftp数据抓包不全）</p>
+<p>可以看到发送一个正常的ftp请求，服务器首先会返回欢迎字样</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/5917157208251.png"></p>
+<p>然后要求输入用户名和密码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2613873151628.png"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/4500148821404.png"></p>
+<p>对比poc就可以知道为啥poc要这么发了，可以知道在挖掘这个漏洞时，先是通过正常ftp请求，抓包分析，然后通过python脚本模拟请求，成功后再进行fuzz，最后在password后面接上超长字符串，程序崩溃，再通过windbg和ida回溯产生崩溃的函数，最终定位到sprintf函数产生了溢出。</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/3881747756168.png"></p>
+<p>简单的分析到此结束，谢谢观看～～</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-01-21</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

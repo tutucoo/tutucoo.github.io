@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>xss-lab 1-10关 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">xss-lab 1-10关</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#xss-lab-1-10%E5%85%B3"><span class="toc-text">xss-lab 1-10关</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%85%B3-get%E5%8F%82%E6%95%B0%E5%AD%98%E5%9C%A8xss"><span class="toc-text">第一关 get参数存在xss</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%85%B3-%E8%BE%93%E5%85%A5%E6%A1%86%E5%AD%98%E5%9C%A8%E7%9A%84xss"><span class="toc-text">第二关 输入框存在的xss</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%85%B3-%E8%BE%93%E5%85%A5%E6%A1%86%E5%AD%98%E5%9C%A8%E7%9A%84xss-htmlspecialchars%E8%BF%87%E6%BB%A4"><span class="toc-text">第三关 输入框存在的xss(htmlspecialchars过滤)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%85%B3-%E8%BE%93%E5%85%A5%E6%A1%86%E5%AD%98%E5%9C%A8%E7%9A%84xss-htmlspecialchars%E8%BF%87%E6%BB%A4"><span class="toc-text">第四关 输入框存在的xss(htmlspecialchars过滤)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E5%85%B3-%E8%BF%87%E6%BB%A4%E4%BA%86%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">第五关 过滤了关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E5%85%B3-%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-text">第六关 大小写绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E5%85%B3-%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-text">第七关 双写绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E5%85%B3-%E5%AE%9E%E4%BD%93%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="toc-text">第八关 实体编码绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E5%85%B3-%E8%BE%93%E5%85%A5%E5%90%88%E6%B3%95%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="toc-text">第九关 输入合法性检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E5%85%B3-%E9%9A%90%E8%97%8F%E7%9A%84%E6%8C%89%E9%92%AE"><span class="toc-text">第十关 隐藏的按钮</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="xss-lab-1-10关"><a href="#xss-lab-1-10关" class="headerlink" title="xss-lab 1-10关"></a>xss-lab 1-10关</h1><h2 id="第一关-get参数存在xss"><a href="#第一关-get参数存在xss" class="headerlink" title="第一关 get参数存在xss"></a>第一关 get参数存在xss</h2><p>没啥好说的</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled.png"></p>
+<h2 id="第二关-输入框存在的xss"><a href="#第二关-输入框存在的xss" class="headerlink" title="第二关 输入框存在的xss"></a>第二关 输入框存在的xss</h2><p>直接输入，无果</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%201.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%201.png"></p>
+<p>不过可以看到插入到了value属性中，因此我们可以这样做，把前面的的双引号进行闭合</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot; onclick=alert(1) &gt;&lt;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>最后点击输入框中触发 </p>
+<h2 id="第三关-输入框存在的xss-htmlspecialchars过滤"><a href="#第三关-输入框存在的xss-htmlspecialchars过滤" class="headerlink" title="第三关 输入框存在的xss(htmlspecialchars过滤)"></a>第三关 输入框存在的xss(htmlspecialchars过滤)</h2><p>正常插入，依旧没有弹框，检查源码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%202.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%202.png"></p>
+<p>看这造型跟上一关也是差不多的呀，于是” onclick=alert(1) &gt;&lt;”</p>
+<p>不过很遗憾，不行</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%203.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%203.png"></p>
+<p>看下源码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%204.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%204.png"></p>
+<p>首先接收输入框的输入赋值给keyword，然后生成一个form，里面的输入框的值由刚才输入的payload赋值，但是这里调用了htmlspecialchars，这个函数的作用如下：</p>
+<ul>
+<li>将括号转换为 HTML 实体</li>
+<li>将&amp;号转换为HTML实体</li>
+<li>将引号转换为HTML实体</li>
+</ul>
+<p>因为我们输入的payload包含了大于号和小于号，所以不能使用这两个符号了</p>
+<p>前面用双引号闭合依然不行，最后多了个双引号，为什么会出现这样的情况呢？</p>
+<p>这需要了解一下单引号和双引号的区别:单引号中的内容不会进行解析，而双引号会进行解析，上图中我们可以发现，value的值是用单引号括起来的，因此里面的值会原封不动的显示出来</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%205.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%205.png"></p>
+<p>所以，我们只需要通过单引号把前面的单引号封闭起来就可以了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; onclick=alert(1)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%206.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%206.png"></p>
+<h2 id="第四关-输入框存在的xss-htmlspecialchars过滤"><a href="#第四关-输入框存在的xss-htmlspecialchars过滤" class="headerlink" title="第四关 输入框存在的xss(htmlspecialchars过滤)"></a>第四关 输入框存在的xss(htmlspecialchars过滤)</h2><p>输入’ onclick=alert(1)，没有弹，查看源码，发现无法跟value的引号进行闭合了，这是什么情况</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%207.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%207.png"></p>
+<p>看下源码，看看是什么过滤先</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%208.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%208.png"></p>
+<p>可以看到，首先将大小括号替换成了空，input控件的value的值是用双引号括起来的</p>
+<p>这里有个规律，value的值如果最外层是双引号，则需要双引号去封闭，如果是单引号，就要用单引号去封闭，</p>
+<p>使用下面的Payload</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot; onclick=alert(1)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%209.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%209.png"></p>
+<h2 id="第五关-过滤了关键字"><a href="#第五关-过滤了关键字" class="headerlink" title="第五关 过滤了关键字"></a>第五关 过滤了关键字</h2><p>输入一个基础的exp，可以看到&lt;script&gt;被过滤了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2010.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2010.png"></p>
+<p>使用大小写绕过依然不行，看下源码是怎么过滤的 </p>
+<p>这里对&lt;script和on进行了过滤</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2011.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2011.png"></p>
+<p>这就容易了，不能用script和on就行了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot; &gt; &lt;iframe src=javascript:alert(1)&gt;&lt;/iframe&gt;</span></span><br></pre></td></tr></table></figure>
+<p>iframe跟input不是一个控件，因此需要用&gt;隔开</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2012.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2012.png"></p>
+<h2 id="第六关-大小写绕过"><a href="#第六关-大小写绕过" class="headerlink" title="第六关 大小写绕过"></a>第六关 大小写绕过</h2><p>继续套用第五关用的exp，结果看到src被过滤</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2013.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2013.png"></p>
+<p>然后试了几个，发现<code>&lt;script&gt;&lt;href&gt;</code>也被过滤 ，看下源码，了解一下完整的过滤列表</p>
+<p>可以看到以下几个过滤字段，但是并没有对大小括号进行过滤</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2014.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2014.png"></p>
+<p>所以payload中，没这几个就可以了，这里用大小写绕过</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; &gt;<span class="tag">&lt;<span class="name">SCRIPT</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">SCRIPT</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="第七关-双写绕过"><a href="#第七关-双写绕过" class="headerlink" title="第七关 双写绕过"></a>第七关 双写绕过</h2><p>直接用上一关的exp，发现<code>&lt;script&gt;</code>被替换了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2015.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2015.png"></p>
+<p>看下源码有哪些过滤，这里在上一关的基础上增加了大小写过滤，直接将所有字符小写化，如果匹配上了就替换为空</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2016.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2016.png"></p>
+<p>既然这样，我们就用双写绕过</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; oonnclick=alert(1)</span><br></pre></td></tr></table></figure>
+<p>此时后面还多了一个双引号</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2017.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2017.png"></p>
+<p>用下面的exp进行封闭</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; oonnclick=alert(1) &quot;</span><br></pre></td></tr></table></figure>
+<h2 id="第八关-实体编码绕过"><a href="#第八关-实体编码绕过" class="headerlink" title="第八关 实体编码绕过"></a>第八关 实体编码绕过</h2><p>发现无法封闭</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2018.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2018.png"></p>
+<p>看源码发现，不仅有之前的防护，还添加了对双引号的过滤，并且拒绝使用大小括号</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2019.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2019.png"></p>
+<p>我们直接用<code>javascript:alert</code>也不行，因为中间的script会被替换</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2020.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2020.png"></p>
+<p>使用下面的exp，t字符用<code>&amp;#116</code>来代替</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javascript&amp;#116:alert()</span><br></pre></td></tr></table></figure>
+<p>执行完看到友情链接中插入了代码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2021.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2021.png"></p>
+<p>点击友情链接，触发xss</p>
+<h2 id="第九关-输入合法性检查"><a href="#第九关-输入合法性检查" class="headerlink" title="第九关 输入合法性检查"></a>第九关 输入合法性检查</h2><p>还是使用上一关的exp，但是在前端代码中没有插入成功，看下源码进行了哪些防护</p>
+<p>可以看到对链接进行了合法性判断，字符串前面必须是<code>http://</code></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2022.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2022.png"></p>
+<p>我们构造字符串把<code>http://</code>放在exp的前面肯定不行，这样会把js代码识别为网址</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2023.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2023.png"></p>
+<p>exp如下，php中//表示注释，这样既可以绕过合法性检查，也可以把http://隔开</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javascrip&amp;#116:alert()//http://</span><br></pre></td></tr></table></figure>
+<h2 id="第十关-隐藏的按钮"><a href="#第十关-隐藏的按钮" class="headerlink" title="第十关 隐藏的按钮"></a>第十关 隐藏的按钮</h2><p>这题没有看到输入框，在get参数中随意输入也没看到可注入的地方，查看前端代码可以看到默认有一些控件是隐藏的，我们把它显示出来 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2024.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2024.png"></p>
+<p>将hidden改为show，下图中的三个框显示出来了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2025.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2025.png"></p>
+<p>我们在get参数中添加t_sort</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2026.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2026.png"></p>
+<p>在前端注入到value中</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2027.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2027.png"></p>
+<p>最终的exp是:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot; onclick=alert() type=&quot;button&quot;</span><br></pre></td></tr></table></figure>
+<p>exp中将type改为了按钮，这样就可以点击按钮进行触发了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2028.png" alt="xss-lab%201-10%E5%85%B3%201d896838a3634be98810245205654d67/Untitled%2028.png"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-04-19</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
