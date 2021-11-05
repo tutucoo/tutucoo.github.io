@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>frida笔记@Frida基础：环境搭建 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">frida笔记@Frida基础：环境搭建</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Frida%E7%AC%94%E8%AE%B0%E4%B8%80%EF%BC%9A%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">Frida笔记一：环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85python3"><span class="toc-text">安装python3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85frida"><span class="toc-text">安装frida</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8Cfrida-server"><span class="toc-text">运行frida server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#frida%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-text">frida脚本开发环境</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="Frida笔记一：环境搭建"><a href="#Frida笔记一：环境搭建" class="headerlink" title="Frida笔记一：环境搭建"></a>Frida笔记一：环境搭建</h1><h2 id="安装python3"><a href="#安装python3" class="headerlink" title="安装python3"></a><strong>安装python3</strong></h2><p>frida需要python3的支持</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv install 3.7.5 -v</span><br></pre></td></tr></table></figure>
+<h2 id="安装frida"><a href="#安装frida" class="headerlink" title="安装frida"></a><strong>安装frida</strong></h2><p>安装frida(安装frida-tools会自动安装最新版frida，所以也要指定frida-tools的版本)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install frida&#x3D;&#x3D;12.4.8</span><br></pre></td></tr></table></figure>
+<p>安装frida tool(命令行工具)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install frida-tools&#x3D;&#x3D;1.3.2</span><br></pre></td></tr></table></figure>
+<p>查看frida版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida --version</span><br></pre></td></tr></table></figure>
+<h2 id="运行frida-server"><a href="#运行frida-server" class="headerlink" title="运行frida server"></a>运行<strong>frida server</strong></h2><p>在此页面<a target="_blank" rel="noopener" href="https://github.com/frida/frida/releases">https://github.com/frida/frida/releases</a></p>
+<p>下载frida-server-12.4.8-android-arm64.xz，frida-server的版本与前面安装的frida版本要一致</p>
+<p>解压frida-server-12.4.8-android-arm64.xz释放出frida-server-12.4.8-android-arm64</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ adb push frida-server-12.4.8-android-arm64 &#x2F;data&#x2F;local&#x2F;tmp&#x2F;fs1248</span><br><span class="line">$ adb shell chmod +x &#x2F;data&#x2F;local&#x2F;tmp&#x2F;fs1248</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，在启动frida server之前要确保手机selinux是关闭的状态，可以通过指令进行设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set enforce 0</span><br></pre></td></tr></table></figure>
+<p>此外还要关闭Magisk的Magisk Hide功能</p>
+<p>启动服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;data&#x2F;local&#x2F;tmp&#x2F;fs1248 -l 0.0.0.0:8888 </span><br></pre></td></tr></table></figure>
+<h2 id="frida脚本开发环境"><a href="#frida脚本开发环境" class="headerlink" title="frida脚本开发环境"></a>frida脚本开发环境</h2><p>进行环境安装 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">clone</span> git:<span class="comment">//github.com/oleavr/frida-agent-example.git</span></span><br><span class="line">cd frida-agent-example/</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>用vscode打开firda-agent-example文件，然后在agent下编写脚本就有提示了 </p>
+<p><img src="https://i.loli.net/2021/10/08/N5TX2QLhjItrYsc.png" alt="Untitled"></p>
+<p>进入frida-agent-example文件夹执行下面的命令会监控修改并自动生成js文件 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run watch</span><br></pre></td></tr></table></figure>
+<p>执行脚本 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -f com.android.settings -H <span class="number">192.168</span><span class="number">.1</span><span class="number">.115</span>:<span class="number">8888</span> -l test.js --no-pause</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/08/3wSUdzC9VqsNKpA.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-10-08</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

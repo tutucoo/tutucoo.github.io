@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>frida笔记@Frida基础： objection - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">frida笔记@Frida基础： objection</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Frida%E7%AC%94%E8%AE%B0%E4%BA%8C%EF%BC%9A-objection"><span class="toc-text">Frida笔记二： objection</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85objection"><span class="toc-text">安装objection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%8A%9F%E8%83%BD"><span class="toc-text">常用功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%AE%E5%8A%A9"><span class="toc-text">帮助</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5app"><span class="toc-text">注入app</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-heap"><span class="toc-text">android heap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-root"><span class="toc-text">android root</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-intent"><span class="toc-text">android intent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-hooking-search"><span class="toc-text">android hooking search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-hooking-list"><span class="toc-text">android hooking list</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#android-hooking-watch"><span class="toc-text">android hooking watch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#memory-dump"><span class="toc-text">memory dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#memory-search"><span class="toc-text">memory search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#memory-write"><span class="toc-text">memory write</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#memory-list"><span class="toc-text">memory list</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#job"><span class="toc-text">job</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#objection-log"><span class="toc-text">objection log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#plugin"><span class="toc-text">plugin</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%EF%BC%9AWallbreaker"><span class="toc-text">插件：Wallbreaker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%EF%BC%9AFRIDA-DEXDump"><span class="toc-text">插件：FRIDA-DEXDump</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="Frida笔记二：-objection"><a href="#Frida笔记二：-objection" class="headerlink" title="Frida笔记二： objection"></a>Frida笔记二： objection</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>objection是一个基于Frida开发的工具，可以很方便的hook Java函数和类，并且输出参数，调用栈，返回值。</p>
+<h2 id="安装objection"><a href="#安装objection" class="headerlink" title="安装objection"></a><strong>安装objection</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install objection</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/09/OpWJPNnb49jEsfX.png" alt="Untitled"></p>
+<h2 id="常用功能"><a href="#常用功能" class="headerlink" title="常用功能"></a>常用功能</h2><h3 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a><strong>帮助</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">help android hooking watch class_method</span><br></pre></td></tr></table></figure>
+<h3 id="注入app"><a href="#注入app" class="headerlink" title="注入app"></a>注入app</h3><p>通过wifi的方式启动手机上的app</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objection -N -h 192.168.1.115 -p 8888 -g com.android.settings explore</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/09/vVK9r7XHgIyWNTc.png" alt="Untitled"></p>
+<h3 id="android-heap"><a href="#android-heap" class="headerlink" title="android heap"></a>android heap</h3><p>execute：执行Java 类方法</p>
+<p>search instances：搜索Android堆中的类实例</p>
+<h3 id="android-root"><a href="#android-root" class="headerlink" title="android root"></a>android root</h3><p>尝试禁用root检测 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android root disable</span><br></pre></td></tr></table></figure>
+<p>尝试模拟root环境 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android root simulate</span><br></pre></td></tr></table></figure>
+<h3 id="android-intent"><a href="#android-intent" class="headerlink" title="android intent"></a>android intent</h3><p>启动activity</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android intent launch_activity</span><br></pre></td></tr></table></figure>
+<p>启动服务 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android intent launch_service</span><br></pre></td></tr></table></figure>
+<h3 id="android-hooking-search"><a href="#android-hooking-search" class="headerlink" title="android hooking search"></a>android hooking search</h3><p>搜索类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking search classes</span><br></pre></td></tr></table></figure>
+<p>搜索方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking search methods</span><br></pre></td></tr></table></figure>
+<h3 id="android-hooking-list"><a href="#android-hooking-list" class="headerlink" title="android hooking list"></a>android hooking list</h3><p>列出所有activity</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> activities</span><br></pre></td></tr></table></figure>
+<p>列出所有类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> classes</span><br></pre></td></tr></table></figure>
+<p>列出所有类方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> class_methods</span><br></pre></td></tr></table></figure>
+<p>列出所有classloader</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> class_loaders</span><br></pre></td></tr></table></figure>
+<p>列出所有监听器</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> receivers</span><br></pre></td></tr></table></figure>
+<p>列出所有服务 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android hooking <span class="keyword">list</span> services</span><br></pre></td></tr></table></figure>
+<h3 id="android-hooking-watch"><a href="#android-hooking-watch" class="headerlink" title="android hooking watch"></a>android hooking watch</h3><p>hook类调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">android hooking watch class --dump-args --dump-b</span><br><span class="line">acktrace --dump-return</span><br></pre></td></tr></table></figure>
+<p>hook方法调用</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">android hooking watch class_method --dump-args -</span><br><span class="line">-dump-backtrace --dump-<span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<h3 id="memory-dump"><a href="#memory-dump" class="headerlink" title="memory dump"></a>memory dump</h3><p>dump当前进程的整个内存</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory dump all</span><br></pre></td></tr></table></figure>
+<p>指定基址进行dump</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory dump from_base</span><br></pre></td></tr></table></figure>
+<h3 id="memory-search"><a href="#memory-search" class="headerlink" title="memory search"></a>memory search</h3><p>从指定偏移搜索内存</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory search --offsets-only</span><br></pre></td></tr></table></figure>
+<p>在内存中搜索字符串</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory search --<span class="keyword">string</span></span><br></pre></td></tr></table></figure>
+<h3 id="memory-write"><a href="#memory-write" class="headerlink" title="memory write"></a>memory write</h3><p>写内存</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory write --<span class="keyword">string</span></span><br></pre></td></tr></table></figure>
+<h3 id="memory-list"><a href="#memory-list" class="headerlink" title="memory list"></a>memory list</h3><p>导出模块信息到文件 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory <span class="keyword">list</span> exports</span><br></pre></td></tr></table></figure>
+<p>列出模块信息</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memory <span class="keyword">list</span> modules</span><br></pre></td></tr></table></figure>
+<h3 id="job"><a href="#job" class="headerlink" title="job"></a>job</h3><p>显示当前任务，比如说android hooking watch一个类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jobs <span class="keyword">list</span></span><br></pre></td></tr></table></figure>
+<p>删除一个任务</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jobs kill</span><br></pre></td></tr></table></figure>
+<h3 id="objection-log"><a href="#objection-log" class="headerlink" title="objection log"></a>objection log</h3><p>显示objection历史操作信息 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat .objection/objection.log </span><br></pre></td></tr></table></figure>
+<h3 id="plugin"><a href="#plugin" class="headerlink" title="plugin"></a>plugin</h3><p>加载插件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugin load /root/Wallbreaker</span><br></pre></td></tr></table></figure>
+<p>可以查看到插件的所有命令</p>
+<p><img src="https://i.loli.net/2021/10/09/BPIpo4cROVWH91G.png" alt="Untitled"></p>
+<h2 id="插件：Wallbreaker"><a href="#插件：Wallbreaker" class="headerlink" title="插件：Wallbreaker"></a>插件：Wallbreaker</h2><p>这个插件在最新的objection中使用bug比较多</p>
+<p>classsearch：搜索类名中包含bluetooth的类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugin wallbreaker classsearch bluetooth</span><br></pre></td></tr></table></figure>
+<p>classdump：dump类中所有信息</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plugin wallbreaker classdump --fullname com.andr</span><br><span class="line">oid.settingslib.bluetooth.BluetoothCallback</span><br></pre></td></tr></table></figure>
+<p>objectsearch：搜索对象 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugin wallbreaker objectsearch</span><br></pre></td></tr></table></figure>
+<p>objectdump：dump对象</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plugin wallbreaker objectdump --<span class="keyword">as</span>-<span class="class"><span class="keyword">class</span></span></span><br><span class="line"><span class="class"><span class="title">plugin</span> <span class="title">wallbreaker</span> <span class="title">objectdump</span> --<span class="title">fullname</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="插件：FRIDA-DEXDump"><a href="#插件：FRIDA-DEXDump" class="headerlink" title="插件：FRIDA-DEXDump"></a>插件：FRIDA-DEXDump</h2><p>搜索所有dex</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugin dexdump search</span><br></pre></td></tr></table></figure>
+<p>dump内存中所有的dex</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plugin dexdump dump</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/09/Wx5M81h3X42uvbk.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-10-09</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

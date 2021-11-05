@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>抓包技术@统一社会信用代码app过双向校验抓包 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/summary" class="menu-item-link">Summary</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">抓包技术@统一社会信用代码app过双向校验抓包</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  
+
+  <div class="post-content">
+    <p>hook找到证书密码并导出p12证书</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_KeyStore_load</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    Java.perform(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> ByteString = Java.use(<span class="string">&quot;com.android.okhttp.okio.ByteString&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> myArray=<span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">1024</span>);</span><br><span class="line">        <span class="keyword">var</span> i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; myArray.length; i++) &#123;</span><br><span class="line">            myArray[i]= <span class="number">0x0</span>;</span><br><span class="line">         &#125;</span><br><span class="line">        <span class="keyword">var</span> buffer = Java.array(<span class="string">&#x27;byte&#x27;</span>,myArray);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> StringClass = Java.use(<span class="string">&quot;java.lang.String&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> KeyStore = Java.use(<span class="string">&quot;java.security.KeyStore&quot;</span>);</span><br><span class="line">        KeyStore.load.overload(<span class="string">&#x27;java.security.KeyStore$LoadStoreParameter&#x27;</span>).implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(Java.use(<span class="string">&quot;android.util.Log&quot;</span>).getStackTraceString(Java.use(<span class="string">&quot;java.lang.Throwable&quot;</span>).$new()));</span><br><span class="line"></span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;KeyStore.load1:&quot;</span>, arg0);</span><br><span class="line">            <span class="built_in">this</span>.load(arg0);</span><br><span class="line">        &#125;;</span><br><span class="line">        KeyStore.load.overload(<span class="string">&#x27;java.io.InputStream&#x27;</span>, <span class="string">&#x27;[C&#x27;</span>).implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0, arg1</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(Java.use(<span class="string">&quot;android.util.Log&quot;</span>).getStackTraceString(Java.use(<span class="string">&quot;java.lang.Throwable&quot;</span>).$new()));</span><br><span class="line"></span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;KeyStore.load2:&quot;</span>, arg0, arg1 ? StringClass.$new(arg1) : <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (arg0)&#123;</span><br><span class="line">                <span class="keyword">var</span> file =  Java.use(<span class="string">&quot;java.io.File&quot;</span>).$new(<span class="string">&quot;/sdcard/Download/&quot;</span>+ <span class="built_in">String</span>(arg0)+<span class="string">&quot;.p12&quot;</span>);</span><br><span class="line">                <span class="keyword">var</span> out = Java.use(<span class="string">&quot;java.io.FileOutputStream&quot;</span>).$new(file);</span><br><span class="line">                <span class="keyword">var</span> r;</span><br><span class="line">                <span class="keyword">while</span>( (r = arg0.read(buffer)) &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                    out.write(buffer,<span class="number">0</span>,r)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">&quot;save success!&quot;</span>)</span><br><span class="line">                out.close()</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">this</span>.load(arg0, arg1);</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;hook_KeyStore_load...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    hook_ssl()</span><br><span class="line">&#125;</span><br><span class="line">setImmediate(main);</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2021/10/20/lpPKmbI9aWZRFSt.png" alt="Untitled"></p>
+<p>导入p12证书后仍然抓不到包，根据提示，客户端对服务器也进行了校验，可以通过hook ssl来绕过ssl pinning</p>
+<p><img src="https://i.loli.net/2021/10/20/9ye5Mn6VxGc3iSD.png" alt="Untitled"></p>
+<p>对ssl进行hook，对所有重载函数都置空</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_ssl</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    Java.perform(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> ClassName = <span class="string">&quot;com.android.org.conscrypt.Platform&quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> Platform = Java.use(ClassName);</span><br><span class="line">        <span class="keyword">var</span> targetMethod = <span class="string">&quot;checkServerTrusted&quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> len = Platform[targetMethod].overloads.length;</span><br><span class="line">        <span class="built_in">console</span>.log(len);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</span><br><span class="line">            Platform[targetMethod].overloads[i].implementation = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">&quot;class:&quot;</span>, ClassName, <span class="string">&quot;target:&quot;</span>, targetMethod, <span class="string">&quot; i:&quot;</span>, i, <span class="built_in">arguments</span>);</span><br><span class="line">                <span class="comment">//printStack(ClassName + &quot;.&quot; + targetMethod);</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    hook_ssl()</span><br><span class="line">&#125;</span><br><span class="line">setImmediate(main);</span><br></pre></td></tr></table></figure>
+<p>成功绕过双向校验</p>
+<p><img src="https://i.loli.net/2021/10/20/k35iGMmZQ9HjPn2.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2021-10-20</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2021
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
