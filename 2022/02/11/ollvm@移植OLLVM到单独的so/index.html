@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@移植OLLVM到单独的so - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@移植OLLVM到单独的so</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A7%BB%E6%A4%8DOLLVM%E5%88%B0%E5%8D%95%E7%8B%AC%E7%9A%84so"><span class="toc-text">移植OLLVM到单独的so</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-text">整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ollvm%E7%9B%AE%E5%BD%95"><span class="toc-text">ollvm目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E7%9B%AE%E5%BD%95%E4%B8%8BCMakeLists-txt"><span class="toc-text">根目录下CMakeLists.txt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8CLion%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91"><span class="toc-text">用CLion进行编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95ollvm"><span class="toc-text">调试ollvm</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="移植OLLVM到单独的so"><a href="#移植OLLVM到单独的so" class="headerlink" title="移植OLLVM到单独的so"></a>移植OLLVM到单独的so</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>移植到单独的so，这样修改OLLVM就不用编译整个LLVM代码</p>
+<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211YMpm31.png" alt="Untitled"></p>
+<h2 id="ollvm目录"><a href="#ollvm目录" class="headerlink" title="ollvm目录"></a>ollvm目录</h2><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211NsUh5v.png" alt="Untitled"></p>
+<p>include目录下的结构</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nvHsTY.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2022021172bFcm.png" alt="Untitled"></p>
+<p>lib目录</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Gzru9L.png" alt="Untitled"></p>
+<p>lib目录下的CMakeLists.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211zMGlhd.png" alt="Untitled"></p>
+<p>lib目录下的LLVMBuild.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211OL3X5P.png" alt="Untitled"></p>
+<p>lib/Transforms目录下</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Ut70Tf.png" alt="Untitled"></p>
+<p>lib/Transforms目录下的CMakeLists.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211gT4jnD.png" alt="Untitled"></p>
+<p>lib/Transforms目录下的LLVMBuild.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211vjmXnQ.png" alt="Untitled"></p>
+<p>lib/Transforms目录下的Obfuscation目录</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211AXPl9G.png" alt="image-20220211153136224"></p>
+<p>CMakeLists.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2022021197F1Ih.png" alt="image-20220211153148520"></p>
+<h2 id="根目录下CMakeLists-txt"><a href="#根目录下CMakeLists-txt" class="headerlink" title="根目录下CMakeLists.txt"></a>根目录下CMakeLists.txt</h2><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211tuw8a4.png" alt="image-20220211153155749"></p>
+<h2 id="用CLion进行编译"><a href="#用CLion进行编译" class="headerlink" title="用CLion进行编译"></a>用CLion进行编译</h2><p>只留下build版本，进行编译，生成了libLLVMObfuscation.a文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211jjWyAh.png" alt="image-20220211153209328"></p>
+<p>给Obfuscation目录下的CMakeLists.txt文件添加一个MODULE标志 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211kwd393.png" alt="image-20220211153219001"></p>
+<p>这时会生成一个LLVMObfuscation.so文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211a18OUC.png" alt="image-20220211153239858"></p>
+<p>ollvm是通过在PassManagerBuilder.cpp中注册绑定参数</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211oga8TT.png" alt="image-20220211153247761"></p>
+<p>在lib/Transforms/Obfuscation目录下创建Entry.cpp</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211dwTVBJ.png" alt="image-20220211153301860"></p>
+<p>把Entry.cpp放到Obfuscation目录下</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2022021136vHl8.png" alt="image-20220211153309077"></p>
+<p>添加命名空间</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Ivsfsp.png" alt="image-20220211153315511"></p>
+<p>添加额外的头文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211UgxZBs.png" alt="image-20220211153322135"></p>
+<p>最后进行注册</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211HJ1dHE.png" alt="image-20220211153329285"></p>
+<p>找到之前编译的clang的路径</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211lVE29w.png" alt="image-20220211153336825"></p>
+<p>Program arguments填入下面的参数，编译生成ll文件</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xclang -load -Xclang /OLLVM/cmake-build-debug/ollvm/lib/Transforms/Obfuscation/LLVMObfuscation.so -mllvm -fla /home/hello_ollvm_fla.c -emit-llvm -S -o /home/hello_ollvm_fla.ll</span><br></pre></td></tr></table></figure>
+<h2 id="调试ollvm"><a href="#调试ollvm" class="headerlink" title="调试ollvm"></a>调试ollvm</h2><p>也可以下断点进行调试</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211vxRnIZ.png" alt="image-20220211153344796"></p>
+<p>断点没有断下来，执行一个异常看下代码有没有被执行</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211VT7iPq.png" alt="image-20220211153352097"></p>
+<p>程序崩溃，看到个clang-9，这条指令是真正的编译指令 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211K0Ftkp.png" alt="image-20220211153400066"></p>
+<p>看下这个clang工具，发现它有个软链接指向了clang-9</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211amfy2Q.png" alt="image-20220211153407036"></p>
+<p>把clang-9的参数拷贝过来，选择clang-9程序</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211sTwiUV.png" alt="image-20220211153413647"></p>
+<p>再重新下断点并调试，这时程序正常断下了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211bl2joT.png" alt="image-20220211153420188"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

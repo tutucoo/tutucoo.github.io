@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@OLLVM的几种混淆方法 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@OLLVM的几种混淆方法</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OLLVM%E7%9A%84%E5%87%A0%E7%A7%8D%E6%B7%B7%E6%B7%86%E6%96%B9%E6%B3%95"><span class="toc-text">OLLVM的几种混淆方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2"><span class="toc-text">指令替换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E5%81%87%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="toc-text">虚假控制流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E5%B9%B3%E5%9D%A6%E5%8C%96"><span class="toc-text">控制流平坦化</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="OLLVM的几种混淆方法"><a href="#OLLVM的几种混淆方法" class="headerlink" title="OLLVM的几种混淆方法"></a>OLLVM的几种混淆方法</h1><h2 id="指令替换"><a href="#指令替换" class="headerlink" title="指令替换"></a>指令替换</h2><p>写一个小程序进行测试</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211kq8mx4.png" alt="Untitled"></p>
+<p>导出环境变量，然后使用ollvm进行指令替换</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> PATH=<span class="regexp">/home/</span>ollvm/llvm-project-<span class="number">9.0</span><span class="number">.1</span>/llvm/cmake-build-release/bin:$PATH</span><br><span class="line">clang -mllvm -sub hello_ollvm.c -o hello_ollvm</span><br></pre></td></tr></table></figure>
+<p>这是原版的 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202117QDGLy.png" alt="Untitled"></p>
+<p>这是经过ollvm指令替换的</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211dDh3qJ.png" alt="Untitled"></p>
+<h2 id="虚假控制流"><a href="#虚假控制流" class="headerlink" title="虚假控制流"></a>虚假控制流</h2><p>通过添加虚假的控制流程来实现混淆 </p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -mllvm -bcf hello_ollvm_bcf.c -o hello_ollvm_bcf</span><br></pre></td></tr></table></figure>
+<p>其实它只会执行某一个地方，绝大多数的位置都不会执行</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202116jg8yf.png" alt="Untitled"></p>
+<h2 id="控制流平坦化"><a href="#控制流平坦化" class="headerlink" title="控制流平坦化"></a>控制流平坦化</h2><p>平坦化效果，通常有大量的while循环</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211yOQoyR.png" alt="Untitled"></p>
+<p>执行平坦化指令</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -mllvm -fla hello_ollvm_fla.c -o hello_ollvm_fla</span><br></pre></td></tr></table></figure>
+<p>平坦化效果</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211LSSV4t.png" alt="Untitled"></p>
+<p>指定函数平坦化混淆</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211ZfpTLA.png" alt="Untitled"></p>
+<p>指定函数不混淆</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211h0q4Nt.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@编写字符串混淆pass - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@编写字符串混淆pass</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86pass"><span class="toc-text">编写字符串混淆pass</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="编写字符串混淆pass"><a href="#编写字符串混淆pass" class="headerlink" title="编写字符串混淆pass"></a>编写字符串混淆pass</h1><p>字符串混淆pass原理是编译时先混淆，使用前再解混淆</p>
+<p>创建一个StringObf.h</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211u9bAJE.png" alt="Untitled"></p>
+<p>创建一个StringObf.cpp</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211cddyjm.png" alt="Untitled"></p>
+<p>加入到CMakeLists.txt中 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211h9JTf7.png" alt="Untitled"></p>
+<p>在Entry.cpp中添加StringObf.h并绑定变量</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202110OUQqd.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211VQnUNH.png" alt="Untitled"></p>
+<p>此时编译一下项目应该是编译成功的</p>
+<p>创建一个测试文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211z5pPsa.png" alt="Untitled"></p>
+<p>声明环境变量，使用clang编译测试文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fNsMj4.png" alt="Untitled"></p>
+<p>测试文件的IR代码</p>
+<p>@是全局变量的标识</p>
+<p>%是局部的寄存器</p>
+<p>可以看到这个例子里有全局的str，也有%str</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211IRyjxY.png" alt="Untitled"></p>
+<p>我们可以先对字符串进行逐位异或加密，再在使用前进行解密</p>
+<p>要先进行加密就要对字符串进行赋值</p>
+<p>写一个测试语句</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211jkm2k7.png" alt="Untitled"></p>
+<p>看下IR中间代码，这里将y保存到下标arrayidx处，arrayidx来自%0的第0个，%0来自字符串数组</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211HbZSon.png" alt="Untitled"></p>
+<p>在StringObf.cpp中添加如下代码，先枚举所有基本块，再枚举所有指令</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2022021130sfGH.png" alt="Untitled"></p>
+<p>执行编译，生成pass，使用这个pass编译测试文件</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -Xclang -load -Xclang /home/OLLVM/cmake-build-debug/ollvm/lib/Transforms/Obfuscation/LLVMObfuscation.so -mllvm -strobf hello_ollvm_7.c -emit-llvm -S -o hello_ollvm_strobf.ll</span><br></pre></td></tr></table></figure>
+<p>指令会在控制台中被打印出来 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202114XfcV3.png" alt="image-20220211154531275"></p>
+<p>打印出每条指令之后再拿到指令里面的值，我们的目标是找@str，所以过滤str字符串</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211XHsbo5.png" alt="Untitled"></p>
+<p>判断是否是一个全局变量，如果是全局变量可以通过判断进入内部逻辑，要找的就是全局变量@str</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211t28aSm.png" alt="Untitled"></p>
+<p>找到全局str，获取到它的值 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211K6WNns.png" alt="image-20220211154546242"></p>
+<p>接着获取到一个异或的值对字符串进行加密 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211GDpjny.png" alt="Untitled"></p>
+<p>接着要进行解密，进行解密需要先申请一个数组，为了了解llvm里面的数组是如何申请的，先在源码里申请一个数组然后进行编译看IR指令 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202112Uyic0.png" alt="Untitled"></p>
+<p>alloca[7*i8]里面的7是数组的长度，先创建了一个数组，再通过bitcast拿到它的指针，这个bitcast就是llvm的函数 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211JBz0dT.png" alt="Untitled"></p>
+<p>用AllocaInst创建一个数组，数组的名字随便拼接一个就可以，最后一个参数是插入当前指令之前</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211urQ7Xg.png" alt="Untitled"></p>
+<p>如果不会使用可以在llvm项目里面搜关键字看下用法</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202113grx7e.png" alt="Untitled"></p>
+<p>创建数组在IR指令中是这样的，发现指令不对，还差一个对齐，这样就需要找到AllocaInst另一个API</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211zK5VKv.png" alt="Untitled"></p>
+<p>至于有哪些API，在编写代码中点击进行看头文件直接可以看到</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202119OALXV.png" alt="Untitled"></p>
+<p>添加对齐参数，并且使用数组ArrayType</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211o9xO1l.png" alt="Untitled"></p>
+<p>这个时候创建成功</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211b34qvc.png" alt="Untitled"></p>
+<p>api使用方法有以下几种：</p>
+<p>1、可以通过在编写源码的时候跳转看api</p>
+<p>2、可以在llvm项目里面搜索关键字看看llvm是怎么用的</p>
+<p>3、llvm官方文档查看使用方法</p>
+<p>接着拿到数组的指针</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202115IR8Vo.png" alt="Untitled"></p>
+<p>再获得字符串数组里面每个下标指针</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202117kyNFj.png" alt="Untitled"></p>
+<p>需要注意要调用insertBefore，否则这里就是反顺序的 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111h8Lmn.png" alt="Untitled"></p>
+<p>再添加一个逻辑，把字符串数据保存到刚才创建的数组里 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Zl0wdf.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nVZ5sz.png" alt="Untitled"></p>
+<p>可以把指令的值全部用%.str.bitcast代替</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211wBgiXS.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Bneknu.png" alt="Untitled"></p>
+<p>代替前</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211A2dTVe.png" alt="Untitled"></p>
+<p>代替后</p>
+<p><img src="%E7%BC%96%E5%86%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86pass%20752ec966d0804194a1abb60834323e3c/Untitled%2032.png" alt="Untitled"></p>
+<p>再加入异或的代码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Ze6xXj.png" alt="Untitled"></p>
+<p>异或后进行保存</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fXDxHq.png" alt="Untitled"></p>
+<p>要提前保存下异或的key </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211slc3Ze.png" alt="Untitled"></p>
+<p>在使用前进行解密</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202116m1D3F.png" alt="Untitled"></p>
+<p>可以看到每次在存储前进行异或解密，这里的xor的key是10进制的98</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211cAHdiK.png" alt="image-20220211154614212"></p>
+<p>这样就无法看到原字符串的值，但是这样的静态反混淆是不够的，完全可以对这些字符进行解密，直接进行异或计算就可以得到原来的字符串</p>
+<p>在优化编译的时候也是可以直接还原的</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211IuUmt4.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nidHiZ.png" alt="Untitled"></p>
+<p>为了防止被优化，需要创建个变量进行中转</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211e1DN1D.png" alt="Untitled"></p>
+<p>将把key保存到另一个变量，再取出，最后使用这个变量进行操作</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202110YHyqK.png" alt="Untitled"></p>
+<p>可以看到这里是对%0进行操作</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111AppLq.png" alt="image-20220211154627516"></p>
+<p>平坦化结合字符串加密</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211tGnOXT.png" alt="Untitled"></p>
+<p>虽然这样增加了逆向的难度，这里的字符串也被分割成了字符，而且无法一眼看出原字符串</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211gL1tIF.png" alt="Untitled"></p>
+<p>在汇编视图可以看到xor指令，这样还是可以还原字符串，只是过程比较繁琐 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211rq4cms.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

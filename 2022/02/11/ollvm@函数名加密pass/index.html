@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@函数名加密pass - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@函数名加密pass</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%90%8D%E5%8A%A0%E5%AF%86pass"><span class="toc-text">函数名加密pass</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="函数名加密pass"><a href="#函数名加密pass" class="headerlink" title="函数名加密pass"></a>函数名加密pass</h1><p>在Transforms下面创建EncodeFunctionName目录，创建一个EncodeFunctionName.cpp文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211iOaOmt.png" alt="Untitled"></p>
+<p>创建下图中的几个文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211IaLr3T.png" alt="Untitled"></p>
+<p>Reload CMake Project</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211OiWHES.png" alt="Untitled"></p>
+<p>把新创建的pass添加到Transforms目录下的CMakeLists.txt文件中</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211gBp2w7.png" alt="Untitled"></p>
+<p>然后在EncodeFunctionName.cpp中添加头文件和命名空间</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211uj4gYq.png" alt="Untitled"></p>
+<p>然后根据官方文档把下面的代码添加上去</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211pyGKbU.png" alt="Untitled"></p>
+<p>进入cmake-build-release目录，直接单独编译这个模块 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211O3gnpL.png" alt="Untitled"></p>
+<p>找到pass路径</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211HdJCgu.png" alt="Untitled"></p>
+<p>通过pass对ll文件进行处理生成bc文件，可以看到pass文件里面的语句被执行了，pass成功编译进去了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211zyNbSL.png" alt="Untitled"></p>
+<p>对函数名进行修改</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211i027Xc.png" alt="Untitled"></p>
+<p>运行时函数名还是原来的，只是静态反编译的情况下会被混淆</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fHCuPS.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
