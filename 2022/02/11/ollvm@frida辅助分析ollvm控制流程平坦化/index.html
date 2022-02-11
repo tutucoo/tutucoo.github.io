@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title"></h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96"><span class="toc-text">frida辅助分析ollvm控制流程平坦化</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="frida辅助分析ollvm控制流程平坦化"><a href="#frida辅助分析ollvm控制流程平坦化" class="headerlink" title="frida辅助分析ollvm控制流程平坦化"></a>frida辅助分析ollvm控制流程平坦化</h1><p>本例调用了sign2函数，传递了2个参数</p>
+<p><img src="https://s2.loli.net/2022/02/11/h4ycGRo1V8E7JB6.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled.png"></p>
+<p>平坦化的流程图 </p>
+<p><img src="https://s2.loli.net/2022/02/11/g3918dMOTNhWD7H.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%201.png"></p>
+<p>像这种有大量while循环的一般就是控制流平坦化了 </p>
+<p><img src="https://s2.loli.net/2022/02/11/L8tVA9qha2SQIpG.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%202.png"></p>
+<p>hook jni函数 </p>
+<p><img src="https://s2.loli.net/2022/02/11/1hKE5zHndemxvAN.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%203.png"></p>
+<p>每次都会传递随机的两个参数，为了方便分析，需要每次都传递相同的值，这就需要主动调用了</p>
+<p><img src="https://s2.loli.net/2022/02/11/si4b9PjlBRODnXd.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%204.png"></p>
+<p>发现每次传入一样的参数，返回值还是会变化，说明jni函数里面还有其他的随机操作，但是返回值有时候会重复，说明不是完全随机的</p>
+<p><img src="https://s2.loli.net/2022/02/11/oamlOVZSnucG2Ci.png" alt="Untitled"></p>
+<p>IDA分析JNI代码，因为OLLVM混淆过了，很多无意义的代码，就无法通过f5进行分析了，这时需要查看参数的引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/Y5uWUISKpihrtOm.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%206.png"></p>
+<p>把v5改为_str_1，再次查看_str_1的引用，发现两处引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/bXOSkJorUlvhI5M.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%207.png"></p>
+<p>看第二处引用，ReleaseStringUTFChars第一个参数是JNIEnv*，第二个参数是要释放的字符串，第三个参数是通过调用GetStringUTFChars(_str1_1)得到的，因为这里_str_1被释放了，但是v9还有引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/isaqIVKX1uZtbeW.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%208.png"></p>
+<p>v9的引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/Anby6B259xXsaqH.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%209.png"></p>
+<p>这是v9所有引用的地方，主要看sub_13558，v45应该是传出来的值，V9是传入的字符串，V10是长度</p>
+<p><img src="https://s2.loli.net/2022/02/11/A5KzF6GTPNcJdmR.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2010.png"></p>
+<p>接着看v45的引用，如果引用比较多，优先看函数调用</p>
+<p><img src="https://s2.loli.net/2022/02/11/BgGXTZoz4PC5Qxq.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2011.png"></p>
+<p>进入sub_13558函数，混淆比较严重</p>
+<p><img src="https://s2.loli.net/2022/02/11/6vkQG8JB9WIM3Lp.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2012.png"></p>
+<p>因为混淆比较严重，所以对它进行hook，看下调用时传入的字符串以及返回时传出的字符串，进入的时候打印的参数是str1，返回的时候打印的是v45</p>
+<p><img src="https://s2.loli.net/2022/02/11/xWbzRQtUO6ywTI3.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2013.png"></p>
+<p>每次主动调用时，sub_13558都会被调用两次，第一次传入0123456789，第二次传入abcdefgh</p>
+<p><img src="https://s2.loli.net/2022/02/11/3ohIiJFAU1aR9nz.png" alt="Untitled"></p>
+<p>给v45重新命名为str_1_str</p>
+<p><img src="https://s2.loli.net/2022/02/11/x4uMXGPwveWJySU.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2015.png"></p>
+<p>然后再看sub_12d70，这时可以发现str_1_str被得重新命名为v44了，sub_13558的第2个参数变成v16了，本来是v9的</p>
+<p><img src="https://s2.loli.net/2022/02/11/XCq52dpj9MQ8Lun.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2016.png"></p>
+<p>v16来自v15，v15又来自v6</p>
+<p><img src="https://s2.loli.net/2022/02/11/TQzpoe5a8fBqkDX.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2017.png"></p>
+<p>再看v6引用，发现是str_2，所以str_2也会传入sub_13558</p>
+<p><img src="https://s2.loli.net/2022/02/11/sbEitO8X9CS3YBN.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2018.png"></p>
+<p>原来的str_1_str重命名为str_2_str</p>
+<p><img src="https://s2.loli.net/2022/02/11/2IW1957CVJMlEZU.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2019.png"></p>
+<p>再看sub_12d70，参数命名也产生了变化</p>
+<p><img src="https://s2.loli.net/2022/02/11/ZVNt7OTnUcxwp8Q.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2020.png"></p>
+<p>hook sub_12d70看一下，进入的时候打印str_1_str和str_2_str，执行完之后再次打印</p>
+<p><img src="https://s2.loli.net/2022/02/11/r4HuctDWnLYPomX.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2021.png"></p>
+<p>sub_12d70执行前和执行后的参数的值，可以看到执行后没有产生变化</p>
+<p><img src="https://s2.loli.net/2022/02/11/CEm24i6ngjtV18o.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2022.png"></p>
+<p>IDA中的sub_12D70的参数解析莫明奇妙发生了变化，看下v50的引用，可以看到v50的引用都是大于124行的，也就是说在124行之前是没有进行赋值的，那么有可能就是在sub_12d70函数内部进行赋值的</p>
+<p><img src="https://s2.loli.net/2022/02/11/jXclHTpC3YDhkAR.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2023.png"></p>
+<p>看下v50的值是什么</p>
+<p><img src="https://s2.loli.net/2022/02/11/4DwtYbremLvunNl.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2024.png"></p>
+<p>v50的值如下图所示，好像也看不出个啥</p>
+<p><img src="https://s2.loli.net/2022/02/11/3qB8wcGvYJAU5iT.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2025.png"></p>
+<p>再看下sub_12d70有没有返回值，x86通常将返回值保存在eax寄存器里面，arm32通常保存在r0，arm64通常把返回值保存在w0或x0，不过这里并没有看到返回值  </p>
+<p><img src="https://s2.loli.net/2022/02/11/IQByqvoXPxtfT3k.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2026.png"></p>
+<p>再经过一番分析，发现没有其他有引用的地方，而且对v50进行了操作，如果没有值是不会这么操作的，所以再看v50，看之前是不是打印错了 </p>
+<p><img src="https://s2.loli.net/2022/02/11/4B8HrN6b9CzajTM.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2027.png"></p>
+<p>v50赋值给了v42，再看sub_13558调用时传递了v42，这个sub_13558就是一开始碰到的函数</p>
+<p><img src="https://s2.loli.net/2022/02/11/dWDoTZKSzU4hGOX.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2028.png"></p>
+<p>看sub_13558的返回值是v28，继续往下看sub_162b8，传递了v28</p>
+<p><img src="https://s2.loli.net/2022/02/11/zwCyxfSYJAvOqdG.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2029.png"></p>
+<p>hook sub_13558，看下返回值 v28</p>
+<p><img src="https://s2.loli.net/2022/02/11/jpHQSwCKeoIlvRJ.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2030.png"></p>
+<p>可以看到v28的值是个字符串</p>
+<p><img src="https://s2.loli.net/2022/02/11/2JEkKp3N5Tjrq1w.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2031.png"></p>
+<p>hook sub_162b8</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_162B8 = base_hello_jni.add(<span class="number">0x162B8</span>);</span><br><span class="line">Interceptor.attach(sub_162B8, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onEnter:&quot;</span>,args[<span class="number">0</span>],args[<span class="number">1</span>],args[<span class="number">2</span>]);</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onLeave:&quot;</span>,retval);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>可以看到传递的三个参数以及返回值，这几个值看起来像指针和长度</p>
+<p><img src="https://s2.loli.net/2022/02/11/Ga369DFtpCgOhN7.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2032.png"></p>
+<p>dump看一下 </p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_162B8 = base_hello_jni.add(<span class="number">0x162B8</span>);</span><br><span class="line">Interceptor.attach(sub_162B8, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onEnter:&quot;</span>,hexdump(args[<span class="number">0</span>]),<span class="string">&quot;\r\n&quot;</span>,args[<span class="number">1</span>],args[<span class="number">2</span>]);</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onLeave:&quot;</span>,hexdump(retval));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>第一个参数可以看出，是将传入的str1和str2拼接起来了，第三个参数是空的，因此可以猜测它是返回值</p>
+<p><img src="https://s2.loli.net/2022/02/11/CjtPIHu6ULlFMis.png" alt="Untitled"></p>
+<p>函数返回时打印一下第三个参数</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_162B8 = base_hello_jni.add(<span class="number">0x162B8</span>);</span><br><span class="line">Interceptor.attach(sub_162B8, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onEnter:&quot;</span>,hexdump(args[<span class="number">0</span>]),<span class="string">&quot;\r\n&quot;</span>,args[<span class="number">1</span>],args[<span class="number">2</span>]);</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_162B8 onLeave:&quot;</span>,hexdump(args[<span class="number">2</span>]),hexdump(retval));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>第三个参数的值是19，它是返回值的长度</p>
+<p><img src="https://s2.loli.net/2022/02/11/KRyBXkSQUv2oZNq.png" alt="Untitled"></p>
+<p>sub_162b8重新命名</p>
+<p><img src="https://s2.loli.net/2022/02/11/icrCPnbWhSmJ7Xa.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2035.png"></p>
+<p>进入sub_162b8进行分析</p>
+<p><img src="https://s2.loli.net/2022/02/11/u5XzcHKafnGgrJe.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2036.png"></p>
+<p>input_buffer给v13和v14用了 </p>
+<p><img src="https://s2.loli.net/2022/02/11/kMdo6GCYFJX4BTt.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2037.png"></p>
+<p>对v14重命名</p>
+<p><img src="https://s2.loli.net/2022/02/11/ITUtQLydYfm3rDF.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2038.png"></p>
+<p>再找_input_buffer引用，发现v21用到了 </p>
+<p><img src="https://s2.loli.net/2022/02/11/XELO9ycaHiR7GpQ.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2039.png"></p>
+<p>v21给了v40</p>
+<p><img src="https://s2.loli.net/2022/02/11/Fhx1WvLsTGijk4g.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2040.png"></p>
+<p>然后v40又给了v41</p>
+<p><img src="https://s2.loli.net/2022/02/11/oTyYAdtxkevLOhU.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2041.png"></p>
+<p>这里引用了一个字符数组，这个一般是base64编码 </p>
+<p><img src="https://s2.loli.net/2022/02/11/wOHlLN3pZgiyVIt.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2042.png"></p>
+<p>这里把返回值Mdey那个字符串直接在010中转码</p>
+<p><img src="https://s2.loli.net/2022/02/11/6baOeqHzkrtmgTX.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2043.png"></p>
+<p>结果就是传入的str1和str2，所以可以确认sub_162b8是base64算法</p>
+<p><img src="https://s2.loli.net/2022/02/11/WiJhUv2CgcBoFp9.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2044.png"></p>
+<p>接着看经过base64加密之后的后续加密</p>
+<p><img src="https://s2.loli.net/2022/02/11/yT7z6N9hnUgIJa3.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2045.png"></p>
+<p>先看sub_130f0</p>
+<p><img src="https://s2.loli.net/2022/02/11/usv2fiYPGh7Sw8o.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2046.png"></p>
+<p>进入sub_130f0 f5再返回发现函数的参数变了，这些多出来的参数先不用管它 </p>
+<p><img src="https://s2.loli.net/2022/02/11/pnf3i7xRrNBDVZ2.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2047.png"></p>
+<p>hook sub_130f0</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_130f0 = base_hello_jni.add(<span class="number">0x130f0</span>);</span><br><span class="line">Interceptor.attach(sub_130f0, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.arg0 = args[<span class="number">0</span>];</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_130f0 onLeave:&quot;</span>,hexdump(<span class="built_in">this</span>.arg0));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>函数执行之后第一个参数的值，该函数调用了多次</p>
+<p><img src="https://s2.loli.net/2022/02/11/kxfrdT1iUs6LR8M.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2048.png"></p>
+<p><img src="https://s2.loli.net/2022/02/11/zWsHbqIduOtKG8x.png" alt="Untitled"></p>
+<p>再看sub_15f1c</p>
+<p><img src="https://s2.loli.net/2022/02/11/KNOemq5XD3EFbk7.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2050.png"></p>
+<p>v37引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/yUbXpd4YSB8lorP.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2051.png"></p>
+<p>先hook sub_15f1c，着重看下函数执行完之后第三个参数的值 </p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_15F1C = base_hello_jni.add(<span class="number">0x15F1C</span>);</span><br><span class="line">Interceptor.attach(sub_15F1C, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.arg2 = args[<span class="number">2</span>];</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_15F1C onEnter:&quot;</span>,args[<span class="number">0</span>],args[<span class="number">1</span>],<span class="built_in">this</span>.arg2);</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_15F1C onLeave:&quot;</span>,<span class="built_in">this</span>.arg2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>三个参数的值</p>
+<p><img src="https://s2.loli.net/2022/02/11/tpRVaBGKwuTMhHv.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2052.png"></p>
+<p>函数执行后第三个参数的值，没有发生变化</p>
+<p><img src="https://s2.loli.net/2022/02/11/4tO7yCmnf3lgqes.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2053.png"></p>
+<p>第一个参数是个指针，修改脚本，改变打印的方式</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_15F1C = base_hello_jni.add(<span class="number">0x15F1C</span>);</span><br><span class="line">Interceptor.attach(sub_15F1C, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.arg2 = args[<span class="number">2</span>];</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_15F1C onEnter:&quot;</span>,ptr(args[<span class="number">0</span>]).readCString(),<span class="built_in">this</span>.arg2);</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_15F1C onLeave:&quot;</span>,hexdump(<span class="built_in">this</span>.arg2));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>第一个参数是之前base64编码字符串，第二个参数是长度，第三个参数是个指针</p>
+<p><img src="https://s2.loli.net/2022/02/11/oJN6A4SjPZmDYl5.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2054.png"></p>
+<p>函数执行完之后，第三个参数的内容是03b5….，然后看sign2的加密结果也是03b5…</p>
+<p><img src="https://s2.loli.net/2022/02/11/reUkKPo7nLmjwHv.png" alt="Untitled"></p>
+<p>进入sub_15f1c</p>
+<p><img src="https://s2.loli.net/2022/02/11/iJKDMubdkIYzVOZ.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2056.png"></p>
+<p>再进入sub_15a28</p>
+<p><img src="https://s2.loli.net/2022/02/11/GaoU7J9PvqxRSrK.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2057.png"></p>
+<p>buffer赋值给了v4</p>
+<p><img src="https://s2.loli.net/2022/02/11/ZyqdOR3HBz5tQws.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2058.png"></p>
+<p>再看v4引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/ikGfXM5tjzubseD.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2059.png"></p>
+<p>看下sub_154d4函数，第二个参数是buffer，第三个参数是len</p>
+<p><img src="https://s2.loli.net/2022/02/11/fU2PcAo8dqObaDj.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2060.png"></p>
+<p>hook sub_154d4看下第一个参数</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_154D4 = base_hello_jni.add(<span class="number">0x154D4</span>);</span><br><span class="line">Interceptor.attach(sub_154D4, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.arg0 = args[<span class="number">0</span>];</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_154D4 onEnter:&quot;</span>,ptr(args[<span class="number">1</span>]).readCString());</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_154D4 onLeave:&quot;</span>,hexdump(<span class="built_in">this</span>.arg0));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>看结果不是这个函数返回了最终的加密字符串</p>
+<p><img src="https://s2.loli.net/2022/02/11/uWmxEKdbaFMec9p.png" alt="Untitled"></p>
+<p>接着看out_buffer的引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/9OgzB6fhECGx1v7.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2062.png"></p>
+<p>将v5改名为_out_buffer</p>
+<p><img src="https://s2.loli.net/2022/02/11/JzVKi8bTNsxq9pI.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2063.png"></p>
+<p>再看_out_buffer的引用</p>
+<p><img src="https://s2.loli.net/2022/02/11/4TDU9CYr7l2vbPd.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2064.png"></p>
+<p>hook sub_158ac</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sub_158AC = base_hello_jni.add(<span class="number">0x158AC</span>);</span><br><span class="line">Interceptor.attach(sub_158AC, &#123;</span><br><span class="line">    onEnter: <span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.arg1 = args[<span class="number">1</span>];</span><br><span class="line">    &#125;,<span class="attr">onLeave</span>: <span class="function"><span class="keyword">function</span> (<span class="params">retval</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;sub_158AC onLeave:&quot;</span>,hexdump(<span class="built_in">this</span>.arg1));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>函数执行之后，输出跟最终的加密字符串一致</p>
+<p><img src="https://s2.loli.net/2022/02/11/JlBSgPo8TrkdDZh.png" alt="Untitled"></p>
+<p><img src="https://s2.loli.net/2022/02/11/GCiyARFEaHIYSWf.png" alt="Untitled"></p>
+<p>进入sub_158ac，这个函数比较简单只有一个函数sub_154d4</p>
+<p><img src="https://s2.loli.net/2022/02/11/osOreY7udIKD6UW.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2067.png"></p>
+<p>查看参数引用，out_buffer赋值给了v9</p>
+<p><img src="https://s2.loli.net/2022/02/11/BUxbNZnywvtFlKW.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2068.png"></p>
+<p>v9重命名为_out_buffer，再看它的引用，v12的值给了_out_buffer</p>
+<p><img src="https://s2.loli.net/2022/02/11/WdQnZUCDLwTuy4k.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2069.png"></p>
+<p>v12的值又是a1给的，下面又调用了sub_154d4</p>
+<p><img src="https://s2.loli.net/2022/02/11/m6fFuXKGoY4HMPU.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2070.png"></p>
+<p>进入sub_154d4，查看第一个参数result的引用，sub_14844的返回值给了result</p>
+<p><img src="https://s2.loli.net/2022/02/11/2wRT9rPZ3gIcVGp.png" alt="Untitled"></p>
+<p>看下sub_14844，这个函数内部有很多常量</p>
+<p>3614090360转为十六进制，再百度一下，可以看到是md5</p>
+<p><img src="https://s2.loli.net/2022/02/11/KB1vYRWNJMQs4z2.png" alt="Untitled"></p>
+<p>如果常量只是用来跳转或判断一般就不是加密算法 </p>
+<p><img src="https://s2.loli.net/2022/02/11/cGLrRSXxUAePNdD.png" alt="frida%E8%BE%85%E5%8A%A9%E5%88%86%E6%9E%90ollvm%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B%E5%B9%B3%E5%9D%A6%E5%8C%96%20f42399ba539040ec9909d01879e4c5fc/Untitled%2073.png"></p>
+<p>根据最终字符串是个32位的字符串，可以猜测是个md5</p>
+<p>再打印一个sub_154d4</p>
+<p>总结一下算法：</p>
+<p>1、调用sign2函数，传递0123456789和abcdefghakdjshgkjadsfhgkjadshfg</p>
+<p>2、拼接成0123456789abcdefghakdjshgkjadsfhgkjadshfg</p>
+<p>3、对0123456789abcdefghakdjshgkjadsfhgkjadshfg进行base64编码</p>
+<p>4、加盐拼接（加盐字符串+++++++++salt2+MDEy…..)</p>
+<p>5、进行md5运算</p>
+<p>逆向的核心是通过输入参数找到算法加密的过程，或从输出结果回溯加密过程</p>
+<p><img src="https://s2.loli.net/2022/02/11/wBHErj3a29lkC6M.png" alt="Untitled"></p>
+<p>计算出的结果跟最终加密的结果一样（注意这里输入最后要回车，不然结果不对）</p>
+<p><img src="https://s2.loli.net/2022/02/11/B96xifZjLQb8XSh.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
