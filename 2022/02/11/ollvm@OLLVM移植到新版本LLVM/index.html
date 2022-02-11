@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@OLLVM移植到新版本LLVM - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@OLLVM移植到新版本LLVM</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OLLVM%E7%A7%BB%E6%A4%8D%E5%88%B0%E6%96%B0%E7%89%88%E6%9C%ACLLVM"><span class="toc-text">OLLVM移植到新版本LLVM</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="OLLVM移植到新版本LLVM"><a href="#OLLVM移植到新版本LLVM" class="headerlink" title="OLLVM移植到新版本LLVM"></a>OLLVM移植到新版本LLVM</h1><p>由于OLLVM已经好几年没有更新了，最近的更新还是基于LLVM4.0的</p>
+<p>进入ollvm github仓库查看文件可以看到修改的位置</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211t33Jkn.png" alt="Untitled"></p>
+<p>下载ollvm</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nxMT6F.png" alt="Untitled"></p>
+<p>切换到llvm-4.0分支</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Kk1CrI.png" alt="Untitled"></p>
+<p>把Obfuscation目录复制到llvm的Transforms目录下 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211pVXCy6.png" alt="Untitled"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Hd5Qb8.png" alt="Untitled"></p>
+<p>修改Transforms/CMakeLists.txt文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211XKN0eh.png" alt="Untitled"></p>
+<p>修改Transform/LLVMBuild.txt文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211mhJCkz.png" alt="Untitled"></p>
+<p>进入IPO目录，找到PassManagerBuilder.cpp</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211hZ8ijP.png" alt="Untitled"></p>
+<p>如果路径下的文件不存在，把文件拷贝到路径下就可以了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Nvg1AQ.png" alt="Untitled"></p>
+<p>可以通过查看github上面的文件修改历史知道做了哪些改动</p>
+<p>PassManagerBuilder.cpp还添加了下面的代码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211n3ZKG3.png" alt="Untitled"></p>
+<p>初始化了AesSeed，这些代码都是LLVM没有的，在移植过去的时候需要添加，另外还有一些简单的改动文件，移植的时候注意下就可以了，这里就不一一截图了 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211wAGPfj.png" alt="Untitled"></p>
+<p>修改好了以后就可以用ninja LLVMObfuscation编译OLLVM了 </p>
+<p>OLLVM有些bug被修复了，根据这些修改对文件进行修改</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211PHJN23.png" alt="Untitled"></p>
+<p>使用ninja clang指令进行编译，如果顺利就移植成功了</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

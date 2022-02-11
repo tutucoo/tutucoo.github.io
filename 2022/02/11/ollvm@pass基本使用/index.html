@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@pass基本使用 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@pass基本使用</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pass%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">pass基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pass%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">pass使用方法</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="pass基本使用"><a href="#pass基本使用" class="headerlink" title="pass基本使用"></a>pass基本使用</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>pass是LLVM里面重要的框架，不同的pass用于源代码在编译之前进行优化，可以复杂化也可以简单化，ollvm就是pass的一种</p>
+<p>下图对bc文件执行了pass，bc文件是机器语言，但是通过—print-bb这个pass，可以打印中间代码</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211u3Xq8m.png" alt="Untitled"></p>
+<p>每个pass都会调用runOnFunction函数，可以对要处理的函数进行修改</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nsZXyP.png" alt="Untitled"></p>
+<h2 id="pass使用方法"><a href="#pass使用方法" class="headerlink" title="pass使用方法"></a>pass使用方法</h2><p>pass在llvm根目录下lib文件夹的Transforms文件夹中</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211j9yz7h.png" alt="Untitled"></p>
+<p>在进行编译时,目标程序的函数都会传递给runOnFunction函数，这个pass只是打印了函数的名字</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Ksp67O.png" alt="Untitled"></p>
+<p>查看这个pass的CMakeLists.txt文件，添加opt，那么就会生成对应的so文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202116LgN3m.png" alt="Untitled"></p>
+<p>生成的pass名字是LLVMHello.so</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211xho6og.png" alt="Untitled"></p>
+<p>下图是使用自定义pass的命令，-hello是自定义pass定义的参数，可以看到这个pass的功能是打印了一个函数名称main</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fPzoLR.png" alt="Untitled"></p>
+<p>再给C文件添加个函数test_hello1</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Uupk4q.png" alt="Untitled"></p>
+<p>hello.clang.ll还存在一些外部的函数，比如说printf，它不受pass影响，所以这个函数名没有打印出来，pass只能优化我们自己写的代码 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Wao4vg.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

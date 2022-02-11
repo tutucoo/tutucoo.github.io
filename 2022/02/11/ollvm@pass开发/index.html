@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@pass开发 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@pass开发</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pass%E5%BC%80%E5%8F%91"><span class="toc-text">pass开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8llvm%E6%BA%90%E7%A0%81%E4%B9%8B%E5%A4%96%E5%BC%80%E5%8F%91pass"><span class="toc-text">在llvm源码之外开发pass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8Cpass"><span class="toc-text">注册pass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8llvm%E6%BA%90%E7%A0%81%E5%A4%96%E8%B0%83%E8%AF%95pass"><span class="toc-text">在llvm源码外调试pass</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#clang%E5%8A%A0%E8%BD%BDpass"><span class="toc-text">clang加载pass</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="pass开发"><a href="#pass开发" class="headerlink" title="pass开发"></a>pass开发</h1><h2 id="在llvm源码之外开发pass"><a href="#在llvm源码之外开发pass" class="headerlink" title="在llvm源码之外开发pass"></a>在llvm源码之外开发pass</h2><p>创建下面几个文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211H0mGNS.png" alt="Untitled"></p>
+<p>根目录下的CMakeLists.txt文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211PG01ap.png" alt="Untitled"></p>
+<p>EncodeFuctionName目录下的CMakeLists.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211G6hiA7.png" alt="Untitled"></p>
+<p>然后用CLion打开，有报错，解决报错</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211qwg45s.png" alt="Untitled"></p>
+<p>修改根目录下CMakeLists.txt</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211QnFj3W.png" alt="Untitled"></p>
+<p>还缺这两个文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211J2nV4H.png" alt="Untitled"></p>
+<p>llvm编译目录下进行搜索找到这两个文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211MDJwlf.png" alt="Untitled"></p>
+<p>获取完整路径 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211wGNg87.png" alt="Untitled"></p>
+<p>设置llvm目录</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211dYhlQ3.png" alt="Untitled"></p>
+<p>再声明子目录</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202113viXB2.png" alt="Untitled"></p>
+<p>如果重名报错修改一下文件夹名称就可以了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211lbu08J.png" alt="Untitled"></p>
+<p>这里添加一个release就可以编译一个release版本</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111jM2ro.png" alt="Untitled"></p>
+<p>编译好之后会生成LLVMEncodeFunctionname2.so文件，使用opt指令就可以进行使用了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Jfrl48.png" alt="Untitled"></p>
+<h2 id="注册pass"><a href="#注册pass" class="headerlink" title="注册pass"></a>注册pass</h2><p>每次加载pass要指定绝对路径还是比较麻烦的，可以通过注册pass，这样就不用每次指定绝对路径</p>
+<p>找到include目录 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211ez0Cpo.png" alt="Untitled"></p>
+<p>创建一个头文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211x8zKnx.png" alt="Untitled"></p>
+<p>创建一个接口</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/2022021105Iwac.png" alt="Untitled"></p>
+<p>包含头文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211jLkgG5.png" alt="Untitled"></p>
+<p>在EncodeFunctionName.cpp实现该接口</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211hA9Jui.png" alt="Untitled"></p>
+<p>添加一些实现</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211gmCZYu.png" alt="Untitled"></p>
+<p>判断一下</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211WPKlkD.png" alt="Untitled"></p>
+<p>找到PassManagerBuilder.cpp添加EncodeFunctionName.h头文件 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211R9qBBu.png" alt="Untitled"></p>
+<p>在CMakeLists.txt中添加下面的指令以便编译成静态库</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211e8qksM.png" alt="Untitled"></p>
+<p>在llvm/lib/Transforms/LLVMBuild.txt中添加到common中</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211QEuDMr.png" alt="Untitled"></p>
+<p>llvm/lib/Transforms/IPO/LLVMBuild.txt中也要添加</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202118icuDM.png" alt="Untitled"></p>
+<p>创建LLVMBuild.txt文件</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211gzStrj.png" alt="Untitled"></p>
+<p>添加参数</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211hiIyhW.png" alt="Untitled"></p>
+<p>还是在PassManagerBuilder.cpp中添加代码，如果命令执行时有参数就会执行这个pass</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Uodg9n.png" alt="Untitled"></p>
+<p>然后执行ninja LLVMEncodeFunctionName单独进行编译</p>
+<p>再编译clang工具 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211rlLL9G.png" alt="Untitled"></p>
+<p>这时就可以把自定义的pass当作参数传递进去进行编译了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211VXO978.png" alt="Untitled"></p>
+<h2 id="在llvm源码外调试pass"><a href="#在llvm源码外调试pass" class="headerlink" title="在llvm源码外调试pass"></a>在llvm源码外调试pass</h2><p>这里路径修改为debug版本的 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211DAhDrB.png" alt="Untitled"></p>
+<p>找到opt的绝对路径</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211FXKcLY.png" alt="Untitled"></p>
+<p>在CLion中进行指定</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202115TFRTJ.png" alt="Untitled"></p>
+<p>参数填写</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-load pass绝对路径 -pass参数 ll文件绝对路径</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111XiJbD.png" alt="Untitled"></p>
+<p>然后在runOnFunction里面下断点进行调试</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211LqqAv5.png" alt="Untitled"></p>
+<h2 id="clang加载pass"><a href="#clang加载pass" class="headerlink" title="clang加载pass"></a>clang加载pass</h2><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211tD3Wva.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
