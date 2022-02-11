@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>算法@分组密码之AES - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">算法@分组密码之AES</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES"><span class="toc-text">分组密码之AES</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="分组密码之AES"><a href="#分组密码之AES" class="headerlink" title="分组密码之AES"></a>分组密码之AES</h1><p>以AES-128为例，会对明文分组进行10轮迭代运算，加密的第1轮到第9轮的轮函数一样，包括4个操作：字节替换、行位移、列混合和轮密钥加。最后一轮迭代不执行列混合。另外，在第一轮迭代之前，先将明文和原始密钥进行一次异或加密操作</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111r6VS2.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES%208f5210e1a4174f6a8f8795491ae7e026/Untitled.png"></p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211woepIT.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES%208f5210e1a4174f6a8f8795491ae7e026/Untitled%201.png"></p>
+<p>字节代替：字节代替的主要是通过s盒完成一个字节到另一个字节的映射</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Lldjvz.png" alt="Untitled"></p>
+<p>行位移：第一行保持不变，第二行循环左移1个字节，第三行循环左移2个字节，第四行循环左移3个字节 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211b5UQNG.png" alt="Untitled"></p>
+<p>列混淆：主要用于提供AES算法的扩散性，对列混淆矩阵相乘得到结果</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211D1a67h.png" alt="Untitled"></p>
+<p>轮密钥加：每轮的输入与轮密钥异或一次（当前分组和扩展密钥的一部分进行按位异或），因为二进制连续异或一个数结果是不变的，所以在解密时再异或该密钥就可恢复</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

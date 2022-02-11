@@ -6,7 +6,7 @@
   <link href="https://tutucoo.github.io/atom.xml" rel="self"/>
   
   <link href="https://tutucoo.github.io/"/>
-  <updated>2022-02-11T06:58:04.670Z</updated>
+  <updated>2022-02-11T07:12:45.378Z</updated>
   <id>https://tutucoo.github.io/</id>
   
   <author>
@@ -15,6 +15,86 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>算法@分组加密算法的的填充模式和工作模式</title>
+    <link href="https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F/"/>
+    <id>https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F/</id>
+    <published>2022-02-11T07:12:37.000Z</published>
+    <updated>2022-02-11T07:12:45.378Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="分组加密算法的的填充模式和工作模式"><a href="#分组加密算法的的填充模式和工作模式" class="headerlink" title="分组加密算法的的填充模式和工作模式"></a>分组加密算法的的填充模式和工作模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>分组密码分别支持的工作模式和填充模式</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211iFK4Nh.png" alt="%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%2078d599c8de674cdab241a48fbd86e55f/Untitled.png"></p><h2 id="分组密码的填充模式"><a href="#分组密码的填充模式" class="headerlink" title="分组密码的填充模式"></a>分组密码的填充模式</h2><p>明文长度不够一个分组时：对不够一个分组大小时，制定一定的标准进行填充，使加密内容的长度到达一个分组大小；在解密时按照相同的标准再将填充部分删掉即可。有时，对于恰好已经是一个明文长度的分组也会填充，这时就会填充一个新的分组。</p><h2 id="分组密码的工作模式"><a href="#分组密码的工作模式" class="headerlink" title="分组密码的工作模式"></a>分组密码的工作模式</h2><p>即对每一个明文分组加密的方式，主要有以下几种：</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211o9zTeF.png" alt="%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%2078d599c8de674cdab241a48fbd86e55f/Untitled%201.png"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;分组加密算法的的填充模式和工作模式&quot;&gt;&lt;a href=&quot;#分组加密算法的的填充模式和工作模式&quot; class=&quot;headerlink&quot; title=&quot;分组加密算法的的填充模式和工作模式&quot;&gt;&lt;/a&gt;分组加密算法的的填充模式和工作模式&lt;/h1&gt;&lt;h2 id=&quot;概述&quot;&gt;&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>算法@分组密码之AES</title>
+    <link href="https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES/"/>
+    <id>https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES/</id>
+    <published>2022-02-11T07:10:37.000Z</published>
+    <updated>2022-02-11T07:11:41.378Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="分组密码之AES"><a href="#分组密码之AES" class="headerlink" title="分组密码之AES"></a>分组密码之AES</h1><p>以AES-128为例，会对明文分组进行10轮迭代运算，加密的第1轮到第9轮的轮函数一样，包括4个操作：字节替换、行位移、列混合和轮密钥加。最后一轮迭代不执行列混合。另外，在第一轮迭代之前，先将明文和原始密钥进行一次异或加密操作</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111r6VS2.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES%208f5210e1a4174f6a8f8795491ae7e026/Untitled.png"></p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211woepIT.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BAES%208f5210e1a4174f6a8f8795491ae7e026/Untitled%201.png"></p><p>字节代替：字节代替的主要是通过s盒完成一个字节到另一个字节的映射</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Lldjvz.png" alt="Untitled"></p><p>行位移：第一行保持不变，第二行循环左移1个字节，第三行循环左移2个字节，第四行循环左移3个字节 </p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211b5UQNG.png" alt="Untitled"></p><p>列混淆：主要用于提供AES算法的扩散性，对列混淆矩阵相乘得到结果</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211D1a67h.png" alt="Untitled"></p><p>轮密钥加：每轮的输入与轮密钥异或一次（当前分组和扩展密钥的一部分进行按位异或），因为二进制连续异或一个数结果是不变的，所以在解密时再异或该密钥就可恢复</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;分组密码之AES&quot;&gt;&lt;a href=&quot;#分组密码之AES&quot; class=&quot;headerlink&quot; title=&quot;分组密码之AES&quot;&gt;&lt;/a&gt;分组密码之AES&lt;/h1&gt;&lt;p&gt;以AES-128为例，会对明文分组进行10轮迭代运算，加密的第1轮到第9轮的轮函数一样，包括</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>算法@分组密码之DES</title>
+    <link href="https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES/"/>
+    <id>https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES/</id>
+    <published>2022-02-11T07:09:37.000Z</published>
+    <updated>2022-02-11T07:09:27.843Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="分组密码之DES"><a href="#分组密码之DES" class="headerlink" title="分组密码之DES"></a>分组密码之DES</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>DES算法会将明文按64位进行分组，密钥长64位，其中有56位参与DES运算，其余的几位是检验位，分组后的明文会跟56位密钥进行按位替代或交换形成密文</p><p>每次加密会对64位明文进行16轮编码，每一轮都会用密钥生成的子密钥进行运算</p><p>DES主要的处理过程分为两部分，首先是密钥的生成，然后是明文的处理</p><p><img src="https://s2.loli.net/2022/02/11/mEyAYxR1QSb4Bhu.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled.png"></p><h2 id="DES算法中出现的常量表"><a href="#DES算法中出现的常量表" class="headerlink" title="DES算法中出现的常量表"></a>DES算法中出现的常量表</h2><p>在对每一个64位明文分组进行处理的过程中，有大量常量表参与，从而完成对明文的混淆、扩散等处理。主要常量表有：初始置换表、逆初始置换表、扩展置换E表、8个s-box，这些常量都是快速判断DES算法的标志</p><p><img src="https://s2.loli.net/2022/02/11/hSwx82KXNmYZLzo.png" alt="Untitled"></p><p>在针对明文分组16轮处理过程中，每一轮都需要一个由原始56位密钥经过编排生成的48位子密钥的参与，这个过程中也出现了一些常量表，主要有：初始置换PC-1表、PC-2表</p><p><img src="https://s2.loli.net/2022/02/11/EcxWTZ5LNCmt36J.png" alt="Untitled"></p><h2 id="双重DES和三重DES"><a href="#双重DES和三重DES" class="headerlink" title="双重DES和三重DES"></a>双重DES和三重DES</h2><p>双重DES就是首先用key1对明文进行加密得到加密字符串，再用key2对加密字符串再进行加密得到最终加密字符串</p><p>三重DES是类似的概念，只是加密多加了一轮</p><h2 id="Java中使用DES加密"><a href="#Java中使用DES加密" class="headerlink" title="Java中使用DES加密"></a>Java中使用DES加密</h2><p>Java中使用DES算法</p><p><img src="https://s2.loli.net/2022/02/11/lKZ1G2kadeSUWy9.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%203.png"></p><p>iv是初始化向量参数</p><p>PKCS5Padding表示分组的填充方式</p><p><img src="https://s2.loli.net/2022/02/11/1PwoyYEqrcHkQ4p.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%204.png"></p><h2 id="对DES加密进行hook"><a href="#对DES加密进行hook" class="headerlink" title="对DES加密进行hook"></a>对DES加密进行hook</h2><p>下面有些函数需要重载</p><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">Java.perform(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        Java.use(<span class="string">&#x27;javax.crypto.Cipher&#x27;</span>).getInstance.implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.getInstance is called!&#x27;</span>,arg0);</span><br><span class="line">            <span class="keyword">var</span> result = <span class="built_in">this</span>.getInstance(arg0);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;;</span><br><span class="line">        Java.use(<span class="string">&#x27;javax.crypto.Cipher&#x27;</span>).init.implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0,arg1,arg2</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.init is called!&#x27;</span>,arg0,arg1,arg2);</span><br><span class="line">            <span class="keyword">var</span> mode = arg0;</span><br><span class="line">            <span class="keyword">var</span> key = arg1;</span><br><span class="line">            <span class="keyword">var</span> iv = arg2;</span><br><span class="line">            <span class="keyword">var</span> key_bytes = key.getEncoded();</span><br><span class="line">            <span class="keyword">var</span> iv_bytes = iv.getIV();</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.init is called!&#x27;</span>,mode,key_bytes,iv_bytes);</span><br><span class="line">            <span class="keyword">var</span> result = <span class="built_in">this</span>.init(arg0,arg1,arg2);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="DES的识别"><a href="#DES的识别" class="headerlink" title="DES的识别"></a>DES的识别</h2><p>可以使用findcrypt3进行识别 ，这个插件通过识别常量来判断有没有加密，是哪种加密</p><p><img src="https://s2.loli.net/2022/02/11/NUj3snxCvqMDBip.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%205.png"></p><p>所以我们也可以自己写规则，用来识别加密算法，现在很多用的都不是标准DES的S盒，因此标准DES反而识别不出来，需要自己写规则识别</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211MIt04G.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%206.png"></p><p>另外，可以在IDA中搜E_table这样的字符串，然后把字符串的值填到规则里面</p><p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fEFP48.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%207.png"></p><p>当然也可以通过hook api查看DES加密函数有没有被调用</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;分组密码之DES&quot;&gt;&lt;a href=&quot;#分组密码之DES&quot; class=&quot;headerlink&quot; title=&quot;分组密码之DES&quot;&gt;&lt;/a&gt;分组密码之DES&lt;/h1&gt;&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; titl</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>算法@RC4算法</title>
+    <link href="https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@RC4%E7%AE%97%E6%B3%95/"/>
+    <id>https://tutucoo.github.io/2022/02/11/%E7%AE%97%E6%B3%95@RC4%E7%AE%97%E6%B3%95/</id>
+    <published>2022-02-11T07:00:37.000Z</published>
+    <updated>2022-02-11T07:00:52.099Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="RC4算法"><a href="#RC4算法" class="headerlink" title="RC4算法"></a>RC4算法</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>RC4算法主要有两个算法构成，一个是初始化算法（KSA），还有一个是伪随机子密码生成算法（PRGA）</p><p><img src="https://s2.loli.net/2022/02/11/sg2PYmUJLtMQfkA.png" alt="Untitled"></p><p>KSA算法部分，参数1是一个长度为256的char数组，参数2是密钥，可以任意定义，参数3是密钥的长度，密钥的主要功能是将s-box打乱</p><p><img src="https://s2.loli.net/2022/02/11/hYlXEuRKs2q8cez.png" alt="Untitled"></p><p>PRGA算法，参数1是被打乱的s-box，参数2是需要加密的数据</p><p><img src="https://s2.loli.net/2022/02/11/Z1xzkGXUrbIfYn5.png" alt="Untitled"></p><h2 id="RC4加密算法的识别"><a href="#RC4加密算法的识别" class="headerlink" title="RC4加密算法的识别"></a>RC4加密算法的识别</h2><p>1、RC4算法加密的字符串有一个特点，明文和密文长度相等</p><p>2、逆向算法，找到KSA算法，有两轮非常明显的长度为256的循环体</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;RC4算法&quot;&gt;&lt;a href=&quot;#RC4算法&quot; class=&quot;headerlink&quot; title=&quot;RC4算法&quot;&gt;&lt;/a&gt;RC4算法&lt;/h1&gt;&lt;h2 id=&quot;原理&quot;&gt;&lt;a href=&quot;#原理&quot; class=&quot;headerlink&quot; title=&quot;原理&quot;&gt;&lt;/a&gt;原</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>算法@HMAC算法逆向与还原</title>

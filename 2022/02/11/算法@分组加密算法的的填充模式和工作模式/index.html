@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>算法@分组加密算法的的填充模式和工作模式 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">算法@分组加密算法的的填充模式和工作模式</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="toc-text">分组加密算法的的填充模式和工作模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F"><span class="toc-text">分组密码的填充模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="toc-text">分组密码的工作模式</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="分组加密算法的的填充模式和工作模式"><a href="#分组加密算法的的填充模式和工作模式" class="headerlink" title="分组加密算法的的填充模式和工作模式"></a>分组加密算法的的填充模式和工作模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>分组密码分别支持的工作模式和填充模式</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211iFK4Nh.png" alt="%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%2078d599c8de674cdab241a48fbd86e55f/Untitled.png"></p>
+<h2 id="分组密码的填充模式"><a href="#分组密码的填充模式" class="headerlink" title="分组密码的填充模式"></a>分组密码的填充模式</h2><p>明文长度不够一个分组时：对不够一个分组大小时，制定一定的标准进行填充，使加密内容的长度到达一个分组大小；在解密时按照相同的标准再将填充部分删掉即可。有时，对于恰好已经是一个明文长度的分组也会填充，这时就会填充一个新的分组。</p>
+<h2 id="分组密码的工作模式"><a href="#分组密码的工作模式" class="headerlink" title="分组密码的工作模式"></a>分组密码的工作模式</h2><p>即对每一个明文分组加密的方式，主要有以下几种：</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211o9zTeF.png" alt="%E5%88%86%E7%BB%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E7%9A%84%E5%A1%AB%E5%85%85%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%2078d599c8de674cdab241a48fbd86e55f/Untitled%201.png"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

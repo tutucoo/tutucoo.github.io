@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>算法@分组密码之DES - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">算法@分组密码之DES</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES"><span class="toc-text">分组密码之DES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DES%E7%AE%97%E6%B3%95%E4%B8%AD%E5%87%BA%E7%8E%B0%E7%9A%84%E5%B8%B8%E9%87%8F%E8%A1%A8"><span class="toc-text">DES算法中出现的常量表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E9%87%8DDES%E5%92%8C%E4%B8%89%E9%87%8DDES"><span class="toc-text">双重DES和三重DES</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E4%B8%AD%E4%BD%BF%E7%94%A8DES%E5%8A%A0%E5%AF%86"><span class="toc-text">Java中使用DES加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9DES%E5%8A%A0%E5%AF%86%E8%BF%9B%E8%A1%8Chook"><span class="toc-text">对DES加密进行hook</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DES%E7%9A%84%E8%AF%86%E5%88%AB"><span class="toc-text">DES的识别</span></a></li></ol></li></ol>
+
+  <div class="post-content">
+    <h1 id="分组密码之DES"><a href="#分组密码之DES" class="headerlink" title="分组密码之DES"></a>分组密码之DES</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>DES算法会将明文按64位进行分组，密钥长64位，其中有56位参与DES运算，其余的几位是检验位，分组后的明文会跟56位密钥进行按位替代或交换形成密文</p>
+<p>每次加密会对64位明文进行16轮编码，每一轮都会用密钥生成的子密钥进行运算</p>
+<p>DES主要的处理过程分为两部分，首先是密钥的生成，然后是明文的处理</p>
+<p><img src="https://s2.loli.net/2022/02/11/mEyAYxR1QSb4Bhu.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled.png"></p>
+<h2 id="DES算法中出现的常量表"><a href="#DES算法中出现的常量表" class="headerlink" title="DES算法中出现的常量表"></a>DES算法中出现的常量表</h2><p>在对每一个64位明文分组进行处理的过程中，有大量常量表参与，从而完成对明文的混淆、扩散等处理。主要常量表有：初始置换表、逆初始置换表、扩展置换E表、8个s-box，这些常量都是快速判断DES算法的标志</p>
+<p><img src="https://s2.loli.net/2022/02/11/hSwx82KXNmYZLzo.png" alt="Untitled"></p>
+<p>在针对明文分组16轮处理过程中，每一轮都需要一个由原始56位密钥经过编排生成的48位子密钥的参与，这个过程中也出现了一些常量表，主要有：初始置换PC-1表、PC-2表</p>
+<p><img src="https://s2.loli.net/2022/02/11/EcxWTZ5LNCmt36J.png" alt="Untitled"></p>
+<h2 id="双重DES和三重DES"><a href="#双重DES和三重DES" class="headerlink" title="双重DES和三重DES"></a>双重DES和三重DES</h2><p>双重DES就是首先用key1对明文进行加密得到加密字符串，再用key2对加密字符串再进行加密得到最终加密字符串</p>
+<p>三重DES是类似的概念，只是加密多加了一轮</p>
+<h2 id="Java中使用DES加密"><a href="#Java中使用DES加密" class="headerlink" title="Java中使用DES加密"></a>Java中使用DES加密</h2><p>Java中使用DES算法</p>
+<p><img src="https://s2.loli.net/2022/02/11/lKZ1G2kadeSUWy9.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%203.png"></p>
+<p>iv是初始化向量参数</p>
+<p>PKCS5Padding表示分组的填充方式</p>
+<p><img src="https://s2.loli.net/2022/02/11/1PwoyYEqrcHkQ4p.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%204.png"></p>
+<h2 id="对DES加密进行hook"><a href="#对DES加密进行hook" class="headerlink" title="对DES加密进行hook"></a>对DES加密进行hook</h2><p>下面有些函数需要重载</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	Java.perform(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        Java.use(<span class="string">&#x27;javax.crypto.Cipher&#x27;</span>).getInstance.implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.getInstance is called!&#x27;</span>,arg0);</span><br><span class="line">            <span class="keyword">var</span> result = <span class="built_in">this</span>.getInstance(arg0);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;;</span><br><span class="line">        Java.use(<span class="string">&#x27;javax.crypto.Cipher&#x27;</span>).init.implementation = <span class="function"><span class="keyword">function</span> (<span class="params">arg0,arg1,arg2</span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.init is called!&#x27;</span>,arg0,arg1,arg2);</span><br><span class="line">            <span class="keyword">var</span> mode = arg0;</span><br><span class="line">            <span class="keyword">var</span> key = arg1;</span><br><span class="line">            <span class="keyword">var</span> iv = arg2;</span><br><span class="line">            <span class="keyword">var</span> key_bytes = key.getEncoded();</span><br><span class="line">            <span class="keyword">var</span> iv_bytes = iv.getIV();</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;javax.crypto.Cipher.init is called!&#x27;</span>,mode,key_bytes,iv_bytes);</span><br><span class="line">            <span class="keyword">var</span> result = <span class="built_in">this</span>.init(arg0,arg1,arg2);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="DES的识别"><a href="#DES的识别" class="headerlink" title="DES的识别"></a>DES的识别</h2><p>可以使用findcrypt3进行识别 ，这个插件通过识别常量来判断有没有加密，是哪种加密</p>
+<p><img src="https://s2.loli.net/2022/02/11/NUj3snxCvqMDBip.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%205.png"></p>
+<p>所以我们也可以自己写规则，用来识别加密算法，现在很多用的都不是标准DES的S盒，因此标准DES反而识别不出来，需要自己写规则识别</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211MIt04G.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%206.png"></p>
+<p>另外，可以在IDA中搜E_table这样的字符串，然后把字符串的值填到规则里面</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211fEFP48.png" alt="%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8BDES%201e6af285bea940e0a60f26ecade3ae13/Untitled%207.png"></p>
+<p>当然也可以通过hook api查看DES加密函数有没有被调用</p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
