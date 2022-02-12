@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>trace技术@trace非标准算法 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">trace技术@trace非标准算法</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#trace%E9%9D%9E%E6%A0%87%E5%87%86%E7%AE%97%E6%B3%95"><span class="toc-text">trace非标准算法</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="trace非标准算法"><a href="#trace非标准算法" class="headerlink" title="trace非标准算法"></a>trace非标准算法</h1><p>如果目标sign加密采用了非标准算法，通过采用trace的方式进行算法还原</p>
+<p>动态调试目标，利用IDA脚本可以对目标的so文件进行trace</p>
+<p>trace过程中会碰到很多系统库的的函数，脚本对地址进行了判断，如果不是在目标so文件中的地址则不进行trace</p>
+<p><img src="https://s2.loli.net/2022/02/12/b14JWzcaYry2gt7.png" alt="image-20220212110435364"></p>
+<p>这里指定一下so的名称以及指定函数的起始地址和结束地址</p>
+<p><img src="https://s2.loli.net/2022/02/12/jExiZ8uA2XTJINM.png" alt="Untitled"></p>
+<p>IDA中进行动态调试，在算法函数断下后，执行trace脚本，如果此时程序有多个线程，要把其他线程挂起，防止反调试，之后要再执行resume_process()恢复进程</p>
+<p><img src="https://s2.loli.net/2022/02/12/7RpBxdYLoa8jE5M.png" alt="Untitled"></p>
+<p>用IDA进行trace过程中，会产生trace日志，使用命令tail -f xxx.log可以动态看trace的日志有没有增加</p>
+<p><img src="https://s2.loli.net/2022/02/12/4lmzfbJpEYuswCt.png" alt="Untitled"></p>
+<p>trace有两种方法：</p>
+<p>1、直接在trace日志里面搜索加密后的数据，然后向前推算出算法</p>
+<p>2、从加密函数开始处逆向出算法</p>
+<p>先使用第2种方法，trace完之后找到函数开始的位置</p>
+<p><img src="https://s2.loli.net/2022/02/12/23deRlYWAjgipkL.png" alt="Untitled"></p>
+<p>向上搜索找到两个参数，第一个参数是随机值，第二个参数是长度</p>
+<p><img src="https://s2.loli.net/2022/02/12/Mk9eOCFG7rXR5tl.png" alt="Untitled"></p>
+<p>搜x0的值，发现x9这里使用了</p>
+<p><img src="https://s2.loli.net/2022/02/12/aLvF1z7p3BZuoWb.png" alt="Untitled"></p>
+<p>再继续找x9，发现这里进行load，0x66其实就是f，也就是随机字符串的第一个字符</p>
+<p><img src="https://s2.loli.net/2022/02/12/soN9TI5ubztamxp.png" alt="Untitled"></p>
+<p>因为这个地址+5f0的位置保存了随机字符串，那么trace时这个地址应该会保存字符串中的所有字符，全局搜一下，发现果然是随机字符串</p>
+<p><img src="https://s2.loli.net/2022/02/12/nf69kOWqsrecQF3.png" alt="Untitled"></p>
+<p>再看第二个字符，000000725eb3f1b0是第一个字符，x9的值是000000725eb3f1b1也就是第2个字符</p>
+<p><img src="https://s2.loli.net/2022/02/12/QEkNzD8y4TgtR6n.png" alt="Untitled"></p>
+<p>再往上看x9是哪里来的，可以看到是x0+1得来的，x9是1</p>
+<p><img src="https://s2.loli.net/2022/02/12/vScQUGqM8WyZto6.png" alt="Untitled"></p>
+<p>继续搜这个地址</p>
+<p><img src="https://s2.loli.net/2022/02/12/fxNbJol3IjW6qky.png" alt="Untitled"></p>
+<p>这里b7过后直接是b9，也就是说字符串下标为8的位置有特殊处理 </p>
+<p><img src="https://s2.loli.net/2022/02/12/vETx2tISjMfwyuz.png" alt="Untitled"></p>
+<p>对比下输入和输出，可以看到第9位是一个横杠符号</p>
+<p><img src="https://s2.loli.net/2022/02/12/odmM6yRE52Ih1un.png" alt="Untitled"></p>
+<p>搜一下b8</p>
+<p><img src="https://s2.loli.net/2022/02/12/yg258n6OtDwqobr.png" alt="Untitled"></p>
+<p>b8被加载到x9，然后w23存到x9，x23的值是2d，也就是“-”</p>
+<p><img src="https://s2.loli.net/2022/02/12/mXeDPEgzMU92FBR.png" alt="Untitled"></p>
+<p>下标为8、下标为d的位置都是直接被-替换，但是到了fUC2就不一样了，替换成了4UC2</p>
+<p><img src="https://s2.loli.net/2022/02/12/JzwE7XWLk1PpKog.png" alt="Untitled"></p>
+<p>先把前两个-替换掉，再分析后面的算法</p>
+<p><img src="https://s2.loli.net/2022/02/12/f3hLQJSlGXKTYOC.png" alt="Untitled"></p>
+<p>4UC2的4位置下标为e，通过下图中的地址，可以看到分别对每个下标字符进行了处理，而e并不存在</p>
+<p><img src="https://s2.loli.net/2022/02/12/ViBZWsagd74oEPN.png" alt="Untitled"></p>
+<p>单独搜一下e</p>
+<p><img src="https://s2.loli.net/2022/02/12/S81ntr9RubqTAiL.png" alt="Untitled"></p>
+<p>这里把w23存到x9位置，w23的值就是4</p>
+<p><img src="https://s2.loli.net/2022/02/12/wNgL3UZzI9yocK4.png" alt="Untitled"></p>
+<p>看一下多次的结果，这个位置每一个都是4，说明是写死的 </p>
+<p><img src="https://s2.loli.net/2022/02/12/X2qxnO79AGF8ET5.png" alt="Untitled"></p>
+<p>所以把这个位置填充为4</p>
+<p><img src="https://s2.loli.net/2022/02/12/Am5oeDhVKpTPCrn.png" alt="Untitled"></p>
+<p>然后再看后面的，同样也是被替换成了-号，它的位置是2</p>
+<p><img src="https://s2.loli.net/2022/02/12/cHFjESWs5dLGrRT.png" alt="Untitled"></p>
+<p>所以单独搜一下它的地址，发现确实被替换成了-号 </p>
+<p><img src="https://s2.loli.net/2022/02/12/hNFBI4unPyarHY6.png" alt="Untitled"></p>
+<p><img src="https://s2.loli.net/2022/02/12/IVZOXrBymfapGPv.png" alt="Untitled"></p>
+<p>所以这个位置也赋值为-</p>
+<p><img src="https://s2.loli.net/2022/02/12/QTXUy6nrE5Ajboi.png" alt="Untitled"></p>
+<p>接下来到了7这个位置又不一样了，变成了Seq</p>
+<p><img src="https://s2.loli.net/2022/02/12/319ZmNfIlixq8JA.png" alt="Untitled"></p>
+<p>还是搜字符所在的地址，看下c7的位置的值是怎么来的 </p>
+<p><img src="https://s2.loli.net/2022/02/12/4QRKsxmYLl2paUn.png" alt="Untitled"></p>
+<p>单独搜一下这个值</p>
+<p><img src="https://s2.loli.net/2022/02/12/zikgx6Pw2sjq39v.png" alt="Untitled"></p>
+<p>这个值是从c7拿出来的，它保存的值是0x71，也就是q</p>
+<p><img src="https://s2.loli.net/2022/02/12/VAfPjpGckvhSX1s.png" alt="Untitled"></p>
+<p>看一下这个值0x71是哪里来的，这个地址的引用有好几处，看下293行</p>
+<p><img src="https://s2.loli.net/2022/02/12/JltcoAfGIHyiaOK.png" alt="Untitled"></p>
+<p>可以看到值来自[sp,#0xc]</p>
+<p><img src="https://s2.loli.net/2022/02/12/48R12iQ3kAK9dNe.png" alt="Untitled"></p>
+<p>往上找[sp,#0xc]</p>
+<p><img src="https://s2.loli.net/2022/02/12/h1a3MgXpvSs25Bq.png" alt="Untitled"></p>
+<p>可以看到w28的值存到[sp,#0xc]中了，w28的值来自于[x0,#0x18]，</p>
+<p><img src="https://s2.loli.net/2022/02/12/rlGBTwoOVhRQb6I.png" alt="Untitled"></p>
+<p>x0+0x18实际上就是输入字符串的下标</p>
+<p><img src="https://s2.loli.net/2022/02/12/Zv51S7ieCdFnM8p.png" alt="Untitled"></p>
+<p>这个算法就是这样，输入字符串下标18的位置给输出字符串17的位置，原位置由-代替</p>
+<p><img src="https://s2.loli.net/2022/02/12/sdpCcSluGzYRDvJ.png" alt="Untitled"></p>
+<p>然后再看最后两位不一样的</p>
+<p><img src="https://s2.loli.net/2022/02/12/743F8HTlUgRprzP.png" alt="Untitled"></p>
+<p>最后的2个地址看一下它的值</p>
+<p><img src="https://s2.loli.net/2022/02/12/FP9dgJlVuCZ3rMn.png" alt="Untitled"></p>
+<p>d0的值是31，d1的值是75，对应1u，所以现在要找最后两位</p>
+<p><img src="https://s2.loli.net/2022/02/12/pkeh6mfnxZqKMuP.png" alt="Untitled"></p>
+<p>搜索d2，但是没有结果，说明它并没有读取输入字符串这个位置的值 </p>
+<p><img src="https://s2.loli.net/2022/02/12/BeKVv12iJpHzUDT.png" alt="Untitled"></p>
+<p>看下输入的引用，可以看到最后2个位置它直接写进去了 </p>
+<p><img src="https://s2.loli.net/2022/02/12/OtubxYCGB6PmoK8.png" alt="Untitled"></p>
+<p>可以看到是赋值给了输入字符串</p>
+<p>之前分析过输入字符串的地址赋值给了x0</p>
+<p><img src="https://s2.loli.net/2022/02/12/ywA5dJtO1KUIWHV.png" alt="Untitled"></p>
+<p>要想找到最后两位，一定是对x0的某个偏移进行赋值，搜过x0=搜不到结果，可以搜索[x0,</p>
+<p>下图对0x23偏移进行赋值，也就是下标35的位置赋值为0x34，也就是4</p>
+<p><img src="https://s2.loli.net/2022/02/12/mG6IknpMfPNdT5H.png" alt="Untitled"></p>
+<p>下标34的位置也找到了，赋值为0x62，也就是b</p>
+<p><img src="https://s2.loli.net/2022/02/12/4Zk1wibxRLNOaBG.png" alt="Untitled"></p>
+<p>赋值的位置找到了，还要找到这两个值的来源</p>
+<p>先看最后一个，它的值来自地址x8，x8的值是c28c</p>
+<p><img src="https://s2.loli.net/2022/02/12/1KlWNqGETjoihm4.png" alt="Untitled"></p>
+<p>因为x8是一个指针所以判断它是一个数组</p>
+<p><img src="https://s2.loli.net/2022/02/12/9qHXNwJELSoIFPn.png" alt="Untitled"></p>
+<p>看下这个地址被赋值的情况，x9+x23的结果就是c28c，x23的值是0x4</p>
+<p><img src="https://s2.loli.net/2022/02/12/Z84xwekqH25soyO.png" alt="Untitled"></p>
+<p>继续看x9的来源，来自c000</p>
+<p><img src="https://s2.loli.net/2022/02/12/rxsIZPmp7BGtF3e.png" alt="Untitled"></p>
+<p>搜c000，但是只有这个结果</p>
+<p><img src="https://s2.loli.net/2022/02/12/iMXfy4FchstudZN.png" alt="image-20220212111120937"></p>
+<p>这里卡住了，就直接搜0x34</p>
+<p>这里搜索的时候可以用正则表达式</p>
+<p><img src="https://s2.loli.net/2022/02/12/76V1ILPBXHgRhmw.png" alt="Untitled"></p>
+<p>0x34前面加4个点，这样包含0x34的也可以搜到，但是还是搜不到什么</p>
+<p><img src="https://s2.loli.net/2022/02/12/Pi9EMtaW5s1LDHb.png" alt="image-20220212111153857"></p>
+<p>静态看下这里 </p>
+<p><img src="https://s2.loli.net/2022/02/12/UeAPcY9fJaoIq3p.png" alt="Untitled"></p>
+<p>看下v14的引用</p>
+<p><img src="https://s2.loli.net/2022/02/12/2IpacPR4Z9NWgjz.png" alt="Untitled"></p>
+<p>v14从一个字符串中拿一个字符作为值 </p>
+<p><img src="https://s2.loli.net/2022/02/12/EMOTFoj254vDkRG.png" alt="Untitled"></p>
+<p>找到c70地址引用了它 </p>
+<p><img src="https://s2.loli.net/2022/02/12/XowB2Njn5ZcKq6T.png" alt="Untitled"></p>
+<p>然后在trace日志里找到了对应的位置，所以0x71cc20c000就是字符串的地址 </p>
+<p><img src="https://s2.loli.net/2022/02/12/yUgS8eTFl2xk4tR.png" alt="Untitled"></p>
+<p>然后0xc000+0x288，最后+0x4，在字符串对应数字4</p>
+<p><img src="https://s2.loli.net/2022/02/12/uVMzx2N45rYnJbe.png" alt="Untitled"></p>
+<p>0x4来自[sp,#0x18]</p>
+<p><img src="https://s2.loli.net/2022/02/12/HsC8DpzngNWASuP.png" alt="Untitled"></p>
+<p>它的值从w23传进来的</p>
+<p><img src="https://s2.loli.net/2022/02/12/mo34iREeqrUVStZ.png" alt="Untitled"></p>
+<p>w23是通过w23&amp;0xf得到的,x23的值是0x94，也就是0x94&amp;0xf</p>
+<p>w23是从[sp,#0x64]来的</p>
+<p><img src="https://s2.loli.net/2022/02/12/BT8wJ614zMhupjq.png" alt="Untitled"></p>
+<p>搜索到上一次出现[sp,#0x64]的地方，数据来自w1，而w1的值就是0x94</p>
+<p><img src="https://s2.loli.net/2022/02/12/j2scl49ztV81HmQ.png" alt="Untitled"></p>
+<p>w1又来自于w4，w4是w4跟w9异或的结果 </p>
+<p><img src="https://s2.loli.net/2022/02/12/47MjJnDokhLvTrl.png" alt="Untitled"></p>
+<p>w4的值是0x75，w9的值是0xe1，0x75的值来自于输入字符串</p>
+<p><img src="https://s2.loli.net/2022/02/12/P2ECYHrvo8MAs7V.png" alt="Untitled"></p>
+<p>搜一下这行，发现这个地址都是异或</p>
+<p><img src="https://s2.loli.net/2022/02/12/v3hfOXks4aEbByP.png" alt="Untitled"></p>
+<p>看到了e1的值，是由D0跟31进行异或，31也是来自于源字符串</p>
+<p><img src="https://s2.loli.net/2022/02/12/nCeBslKFiP4q8EN.png" alt="Untitled"></p>
+<p>d0的值来自6d和bd的异或，6d也是来自源字符串</p>
+<p><img src="https://s2.loli.net/2022/02/12/DScOKsbEYTmJ653.png" alt="Untitled"></p>
+<p>这就发现了一个规律，异或的其中一个值都来自源字符串，而另一个值是上一个值异或的结果</p>
+<p><img src="https://s2.loli.net/2022/02/12/5TbqKrhSRF4QUsV.png" alt="Untitled"></p>
+<p>对比一下源字符串，确实一致</p>
+<p><img src="https://s2.loli.net/2022/02/12/J2PIn5hYERSAB3f.png" alt="Untitled"></p>
+<p><img src="https://s2.loli.net/2022/02/12/64iLzKt8WyM1fuw.png" alt="Untitled"></p>
+<p>写算法测试一下，在循环中进行异或</p>
+<p><img src="https://s2.loli.net/2022/02/12/KbFVfJwv25e7Plq.png" alt="Untitled"></p>
+<p>这里的值还不一样，初始值其实是0xff</p>
+<p><img src="https://s2.loli.net/2022/02/12/SOGTMr9u4d6b8ya.png" alt="Untitled"></p>
+<p>这个结果就正确了</p>
+<p><img src="https://s2.loli.net/2022/02/12/RkncgCFrBKJVM4I.png" alt="Untitled"></p>
+<p>但是到了d5后面结果就不对了</p>
+<p><img src="https://s2.loli.net/2022/02/12/nkrHPecSAbjJXim.png" alt="Untitled"></p>
+<p>打印一下下标，下标18的位置就不一样了，说明可能是下标17的位置有问题，因为下标17进行了单独的处理</p>
+<p><img src="https://s2.loli.net/2022/02/12/kJfRCBnDtoI3uLG.png" alt="Untitled"></p>
+<p>下标17的单独处理 </p>
+<p><img src="https://s2.loli.net/2022/02/12/7gYUG4tQV9826L1.png" alt="Untitled"></p>
+<p>而算法这时候对下标17的位置也进行了处理，所以要再处理一次 </p>
+<p><img src="https://s2.loli.net/2022/02/12/M4nBzSZ9HK3AID5.png" alt="Untitled"></p>
+<p>修改过后就正确了，不过a4后面又有个位置不一样了 </p>
+<p><img src="https://s2.loli.net/2022/02/12/vYGst8KXphQk5DJ.png" alt="Untitled"></p>
+<p>看下a4，其实是跟0x79进行异或</p>
+<p><img src="https://s2.loli.net/2022/02/12/vE7rUYsxeRSKFza.png" alt="Untitled"></p>
+<p>0x79在源字符串中的位置就是0x18</p>
+<p><img src="https://s2.loli.net/2022/02/12/4Qw9MmT7txlRNZi.png" alt="Untitled"></p>
+<p>其实0x18的位置是-，所以要用-替换</p>
+<p><img src="https://s2.loli.net/2022/02/12/gQOmqjY8ti1sKSG.png" alt="Untitled"></p>
+<p>下标35是与0xf进行异或，看下下标34的值是0x62</p>
+<p><img src="https://s2.loli.net/2022/02/12/AJcLeZ6BkSofUPm.png" alt="Untitled"></p>
+<p>0x62的值来自于下标为b的位置</p>
+<p><img src="https://s2.loli.net/2022/02/12/9WAB3XZmb8wCYus.png" alt="Untitled"></p>
+<p>它存在下面的字符串中</p>
+<p><img src="https://s2.loli.net/2022/02/12/UMNYjgZbVOKk7Ph.png" alt="Untitled"></p>
+<p>经过追踪0x22的算法如下</p>
+<p><img src="https://s2.loli.net/2022/02/12/cROyFhjtmIUBSWi.png" alt="Untitled"></p>
+<p><img src="https://s2.loli.net/2022/02/12/4NSZYpInKgTl5aq.png" alt="Untitled"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-12</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@汇编代码审计还原ollvm字符串加密 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@汇编代码审计还原ollvm字符串加密</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86"><span class="toc-text">汇编代码审计还原ollvm字符串加密</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="汇编代码审计还原ollvm字符串加密"><a href="#汇编代码审计还原ollvm字符串加密" class="headerlink" title="汇编代码审计还原ollvm字符串加密"></a>汇编代码审计还原ollvm字符串加密</h1><p>这个例子在搜索.datadiv时没有结果，这是因为修改了默认的ollvm前缀，可以通过查看.init_array段，找到解密字符串函数 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211u9fTFB.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled.png"></p>
+<p>像下图中veorq_s8这种字符串加密，一般只在64位中才有，32位的没有</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211v2WmvM.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%201.png"></p>
+<p>这里使用了stru_37010的两个字节</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211bQgdpk.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%202.png"></p>
+<p>它在文件中的偏移是0x36010</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211BxEWYX.png" alt="image-20220211171710509"></p>
+<p>找到它的位置</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211NVTQts.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%204.png"></p>
+<p>选中十六个字节拷贝</p>
+<p><img src="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%205.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%205.png"></p>
+<p>这十六个字节跟v0进行异或，v0是0xc6</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211RvfJ75.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%206.png"></p>
+<p>在010中进行异或操作</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211wnrH9g.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%207.png"></p>
+<p>解密后看到这个字符串的值是Hello from JNI</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211nGGGcw.png" alt="%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%2014db95f1df144032b242e029ecf69f01/Untitled%208.png"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

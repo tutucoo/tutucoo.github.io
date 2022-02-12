@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@通过frida hook还原ollvm字符串加密 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@通过frida hook还原ollvm字符串加密</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%9A%E8%BF%87frida-hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86"><span class="toc-text">通过frida hook还原ollvm字符串加密</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="通过frida-hook还原ollvm字符串加密"><a href="#通过frida-hook还原ollvm字符串加密" class="headerlink" title="通过frida hook还原ollvm字符串加密"></a>通过frida hook还原ollvm字符串加密</h1><p>app在OnCreate中调用了jni函数sign1</p>
+<p><img src="https://s2.loli.net/2022/02/11/GgLPTd9fQvVqpjB.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled.png"></p>
+<p>在字符串窗口可以搜索到.datadiv前缀的字符串，这是默认的ollvm混淆字符串的函数 </p>
+<p><img src="https://s2.loli.net/2022/02/11/IQAmT5Zut3jwJoU.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled%201.png"></p>
+<p>进入这个函数可以看到字符串都被混淆了</p>
+<p><img src="https://s2.loli.net/2022/02/11/XFUN6lWK4Ov1DJx.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled%202.png"></p>
+<p>以异或0xD2为例, 在010Editor的工具中可以恢复这个字符串，十六进制计算中存在异或选项. 无符号字节,十六进制，此时就可以拿到解密以后的结果</p>
+<p>ollvm静态的时候没法看到明文字符串，执行以后在.init_array函数里面对字符串进行解密，解密之后内存之中的字符串就是明文字符串了</p>
+<p>JNI_OnLoad函数的函数数组偏移是这样的</p>
+<p><img src="https://s2.loli.net/2022/02/11/EeolH3gBxqhCJWP.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled%203.png"></p>
+<p>转换指针，可以看到函数，不过函数名被混淆了成了aYcmd</p>
+<p><img src="https://s2.loli.net/2022/02/11/oCiv1DerfkcUQ8d.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled%204.png"></p>
+<p>通过frida hook可以打印出真正的函数名，执行下面的脚本，aYcmd解密后还原了明文sign1 </p>
+<p>通过这种方式可以还原所有的字符串，只不过工作量会很大</p>
+<p><img src="https://s2.loli.net/2022/02/11/BFlJuG1cPg2Zf6o.png" alt="%E9%80%9A%E8%BF%87frida%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%205c6fc7e7648b438bb22a21f93c41641f/Untitled%205.png"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>

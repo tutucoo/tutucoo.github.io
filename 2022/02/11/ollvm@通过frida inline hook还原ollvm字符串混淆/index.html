@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  
+  <title>ollvm@通过frida inline hook还原ollvm字符串混淆 - 打渔为生</title>
+  <link rel="icon" href="https://i.imgur.com/SrZt9VU.jpg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  
+  <meta name="keywords" content=>
+  
+    <meta name="description" content="全平台漏洞挖掘手记">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml " title="打渔为生" type="application/atom+xml">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">打渔为生</a>
+    <div class="subtitle">tutucoo的技术笔记</div>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">主页</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/atom.xml" class="menu-item-link">RSS</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/about" class="menu-item-link">关于</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+
+<article class="post">
+  <div class="post-title">
+    <h1 class="article-title">ollvm@通过frida inline hook还原ollvm字符串混淆</h1>
+  </div>
+
+  <!-- 文章目录 -->
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%9A%E8%BF%87frida-inline-hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86"><span class="toc-text">通过frida inline hook还原ollvm字符串混淆</span></a></li></ol>
+
+  <div class="post-content">
+    <h1 id="通过frida-inline-hook还原ollvm字符串混淆"><a href="#通过frida-inline-hook还原ollvm字符串混淆" class="headerlink" title="通过frida inline hook还原ollvm字符串混淆"></a>通过frida inline hook还原ollvm字符串混淆</h1><p>还是在init_array段里，发现有几个函数，进去看一下</p>
+<p><img src="https://s2.loli.net/2022/02/11/EjZhxfoHm98pFSa.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled.png"></p>
+<p>发现这些都不是解密字符串的函数 </p>
+<p><img src="https://s2.loli.net/2022/02/11/9gmLi4ShtQ1RjJT.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%201.png"></p>
+<p>在JNI_Onload中给参数转类型JavaVM*会出现bug，需要指定jni头文件，7.0以后会自动解析</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211j1klBV.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%202.png"></p>
+<p>进入JNI_OnLoad函数，看到数组偏移v9是被xmmword_3E1E8赋值的</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211erhr3N.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%203.png"></p>
+<p>向上回溯，找到数组偏移的最终来源dword_3E1B4</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202111p4kan.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%204.png"></p>
+<p>再对它进行转码，转为ngis，这就是函数的名字sign的倒序字母</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211coVaLi.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%205.png"></p>
+<p>xmmword_3e1e8跟dword_3e184是一样的，所以下面的是对参数的赋值 ，v6就是参数，而v6又是byte_3e1ba赋值的，byte_3e1ba的值来自byte_22e80，这个值就是函数的参数</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211NMTrVg.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%206.png"></p>
+<p>hook byte_3e1ba的值，发现它也是一个字符串 </p>
+<p>看下byte_22e80的值 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211kpbmfx.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%207.png"></p>
+<p>byte_22e80的值赋值给byte_3e195</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211WUUPGZ.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%208.png"></p>
+<p>为了知道RegisterNatives函数传递的参数的具体内容，对RegisterNatives函数进行hook</p>
+<p>每个参数大小是8个字节，因为是64位系统</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202112ZHfj7.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%209.png"></p>
+<p>动态注册的函数名是sign1，返回值是一个字符串，也就是说只要能hook到RegisterNatives函数就能找到动态注册的函数名</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/202202116dseOl.png" alt="Untitled"></p>
+<p>如果碰到一种情况，无法找到RegisterNatives函数的地址，就比较麻烦了</p>
+<p>我们可以查看byte_22e80的反汇编 </p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211rEHoXG.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%2011.png"></p>
+<p>731c进行了异或，可以hook 7320，就可以解密的字符串了</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211tnM0Yp.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%2012.png"></p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">inline_hook</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> base_hello_jni = Module.findBaseAddress(<span class="string">&quot;libhello-jni.so&quot;</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(base_hello_jni);</span><br><span class="line">    <span class="keyword">if</span>(base_hello_jni)&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(base_hello_jni);</span><br><span class="line">        <span class="keyword">var</span> addr_07320 = base_hello_jni.add(<span class="number">0x07320</span>);</span><br><span class="line">        <span class="comment">// inline hook 和 hook函数是一样的</span></span><br><span class="line">        Interceptor.attach(addr_07320,&#123;</span><br><span class="line">            onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">                <span class="comment">// </span></span><br><span class="line">                <span class="comment">// 64位: X0-X30, XZR(零寄存器)   要学汇编! 不然没法玩inline hook</span></span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">&quot;addr_07320 x13&quot;</span>,<span class="built_in">this</span>.context.x13, <span class="string">&quot; x14&quot;</span>,<span class="built_in">this</span>.context.x14);</span><br><span class="line">            &#125;,</span><br><span class="line">            onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;&#125;</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后我们会发现没法hook成功，是因为frida注入脚本的时候，我们要hook的so文件还没加载。这时候我们需要来hook dlopen,dlopen加载成功以后在去执行inline_hook</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> * dlopen（<span class="keyword">const</span> char * filename ，int flag ）;</span><br></pre></td></tr></table></figure>
+<p>dlopen有2个参数, 我们打印第一个 filename</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_dlopen</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dlopen = Module.findExportByName(<span class="literal">null</span>,<span class="string">&quot;dlopen&quot;</span>);</span><br><span class="line">    Interceptor.attach(dlopen,&#123;</span><br><span class="line">        onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;dlopen&quot;</span>,ptr(args[<span class="number">0</span>]).readCString());</span><br><span class="line">        &#125;,</span><br><span class="line">        onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现没有我们需要的.</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Pixel <span class="number">2</span>::com.example.hellojni_sign2]-&gt; dlopen /vendor/lib64/egl/libGLESv2_adreno.so</span><br><span class="line">dlopen /vendor/lib64/egl/libEGL_adreno.so   </span><br><span class="line">dlopen /vendor/lib64/egl/libGLESv2_adreno.so</span><br><span class="line">dlopen /system/lib64/libEGL.so</span><br><span class="line">dlopen /system/lib64/libGLESv2.so</span><br><span class="line">dlopen /system/lib64/libGLESv1_CM.so</span><br><span class="line">dlopen /vendor/lib64/egl/eglSubDriverAndroid.so</span><br><span class="line">dlopen libadreno_utils.so</span><br><span class="line">dlopen /vendor/lib64/egl/libEGL_adreno.so</span><br></pre></td></tr></table></figure>
+<p>在android6.0的时候,hookdlopen的时候是可以加载所有的so的,但是在高版本的时候就没有了, 我们需要hook另外一个函数,叫做android_dlopen_ext, 所以我们去hook他</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_dlopen</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dlopen = Module.findExportByName(<span class="literal">null</span>,<span class="string">&quot;dlopen&quot;</span>);</span><br><span class="line">    Interceptor.attach(dlopen,&#123;</span><br><span class="line">        onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;dlopen&quot;</span>,ptr(args[<span class="number">0</span>]).readCString());</span><br><span class="line">        &#125;,</span><br><span class="line">        onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;&#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> android_dlopen_ext = Module.findExportByName(<span class="literal">null</span>,<span class="string">&quot;android_dlopen_ext&quot;</span>);</span><br><span class="line">    Interceptor.attach(android_dlopen_ext,&#123;</span><br><span class="line">        onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;android_dlopen_ext&quot;</span>,ptr(args[<span class="number">0</span>]).readCString());</span><br><span class="line">        &#125;,</span><br><span class="line">        onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;&#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回结果, 我们可以看到libhello-jni.so 那么此时就可以去hook他了</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Spawned <span class="string">`com.example.hellojni_sign2`</span>. Resuming main thread!</span><br><span class="line">[Pixel <span class="number">2</span>::com.example.hellojni_sign2]-&gt; android_dlopen_ext /data/app/com.example.hellojni_sign2-VfsaSmMy0zmiYY_Le5Ylfw==<span class="regexp">/oat/</span>arm64/base.odex</span><br><span class="line">android_dlopen_ext /vendor/lib64/egl/libEGL_adreno.so</span><br><span class="line">dlopen /vendor/lib64/egl/libGLESv2_adreno.so</span><br><span class="line">android_dlopen_ext /data/app/com.example.hellojni_sign2-VfsaSmMy0zmiYY_Le5Ylfw==<span class="regexp">/lib/</span>arm64/libhello-jni.so</span><br><span class="line">dlopen /vendor/lib64/egl/libEGL_adreno.so</span><br><span class="line">android_dlopen_ext /vendor/lib64/egl/libGLESv1_CM_adreno.so</span><br><span class="line">dlopen /vendor/lib64/egl/libGLESv2_adreno.so</span><br><span class="line">android_dlopen_ext /vendor/lib64/egl/libGLESv2_adreno.so</span><br><span class="line">dlopen /system/lib64/libEGL.so</span><br><span class="line">dlopen /system/lib64/libGLESv2.so</span><br><span class="line">dlopen /system/lib64/libGLESv1_CM.so</span><br><span class="line">dlopen /vendor/lib64/egl/eglSubDriverAndroid.so</span><br><span class="line">android_dlopen_ext /vendor/lib64/hw/gralloc.msm8998.so</span><br><span class="line">dlopen libadreno_utils.so</span><br><span class="line">dlopen /vendor/lib64/egl/libEGL_adreno.so</span><br><span class="line">android_dlopen_ext /vendor/lib64/hw/android.hardware.graphics.mapper@<span class="number">2.0</span>-impl.so</span><br><span class="line">android_dlopen_ext /vendor/lib64/hw/gralloc.msm8998.so</span><br></pre></td></tr></table></figure>
+<p>然后再修改下代码,整体代码大概如下</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">inline_hook</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> base_hello_jni = Module.findBaseAddress(<span class="string">&quot;libhello-jni.so&quot;</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(base_hello_jni);</span><br><span class="line">    <span class="keyword">if</span>(base_hello_jni)&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;base_hello_jni&quot;</span>,base_hello_jni);</span><br><span class="line">        <span class="keyword">var</span> addr_07320 = base_hello_jni.add(<span class="number">0x07320</span>);</span><br><span class="line">        <span class="comment">// inline hook 和 hook函数是一样的</span></span><br><span class="line">        Interceptor.attach(addr_07320,&#123;</span><br><span class="line">            onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">                <span class="comment">// </span></span><br><span class="line">                <span class="comment">// 根据反汇编值保存在W13，在ARM64里面x13的第8位是W13</span></span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">&quot;addr_07320 x13&quot;</span>,<span class="built_in">this</span>.context.x13);</span><br><span class="line">            &#125;,</span><br><span class="line">            onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;&#125;</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> is_hook_hello_jni = <span class="literal">true</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hook_dlopen</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> android_dlopen_ext = Module.findExportByName(<span class="literal">null</span>,<span class="string">&quot;android_dlopen_ext&quot;</span>);</span><br><span class="line">    Interceptor.attach(android_dlopen_ext,&#123;</span><br><span class="line">        onEnter:<span class="function"><span class="keyword">function</span>(<span class="params">args</span>)</span>&#123;</span><br><span class="line">            <span class="keyword">var</span> so_name = ptr(args[<span class="number">0</span>]).readCString();</span><br><span class="line">            <span class="keyword">if</span>(so_name.indexOf(<span class="string">&quot;libhello-jni.so&quot;</span>))&#123;</span><br><span class="line">                is_hook_hello_jni = <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;android_dlopen_ext&quot;</span>,so_name);</span><br><span class="line">        &#125;,</span><br><span class="line">        onLeave:<span class="function"><span class="keyword">function</span>(<span class="params">retval</span>)</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(is_hook_hello_jni)&#123;</span><br><span class="line">                inline_hook()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211Ns7UMD.png" alt="Untitled"></p>
+<p>再把x13的值放到010editor中查看.就可以看到签名了.</p>
+<p><img src="https://gitee.com/tutucoo/images/raw/master/uPic/20220211VGOj2I.png" alt="%E9%80%9A%E8%BF%87frida%20inline%20hook%E8%BF%98%E5%8E%9Follvm%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B7%B7%E6%B7%86%202294b779590f423ea72d4d4df0268c01/Untitled%2014.png"></p>
+
+  </div>
+  <div class="post-meta">
+    <span class="post-time" style="color:#646060;font-size:13px">2022-02-11</span>
+  </div>
+
+  <div class="post-footer">
+    
+
+    <a href="#top" class="top">返回顶部</a>
+  </div>
+</article>
+
+<!-- 评论插件 -->
+
+<footer>
+  2022
+  <span class="author">
+    tutucoo
+  </span>
+</footer>
+
+
+    </div>
+  </body>
+</html>
