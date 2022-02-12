@@ -49,7 +49,9 @@ trace有两种方法：
 
 因为这个地址+5f0的位置保存了随机字符串，那么trace时这个地址应该会保存字符串中的所有字符，全局搜一下，发现果然是随机字符串
 
-![Untitled](https://s2.loli.net/2022/02/12/nf69kOWqsrecQF3.png)
+![image-20220212154637486](https://s2.loli.net/2022/02/12/5VPqnu9I1sicKFU.png)
+
+
 
 再看第二个字符，000000725eb3f1b0是第一个字符，x9的值是000000725eb3f1b1也就是第2个字符
 
