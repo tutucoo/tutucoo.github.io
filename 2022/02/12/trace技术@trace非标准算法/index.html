@@ -81,7 +81,7 @@
 <p>再继续找x9，发现这里进行load，0x66其实就是f，也就是随机字符串的第一个字符</p>
 <p><img src="https://s2.loli.net/2022/02/12/soN9TI5ubztamxp.png" alt="Untitled"></p>
 <p>因为这个地址+5f0的位置保存了随机字符串，那么trace时这个地址应该会保存字符串中的所有字符，全局搜一下，发现果然是随机字符串</p>
-<p><img src="https://s2.loli.net/2022/02/12/nf69kOWqsrecQF3.png" alt="Untitled"></p>
+<p><img src="https://s2.loli.net/2022/02/12/5VPqnu9I1sicKFU.png" alt="image-20220212154637486"></p>
 <p>再看第二个字符，000000725eb3f1b0是第一个字符，x9的值是000000725eb3f1b1也就是第2个字符</p>
 <p><img src="https://s2.loli.net/2022/02/12/QEkNzD8y4TgtR6n.png" alt="Untitled"></p>
 <p>再往上看x9是哪里来的，可以看到是x0+1得来的，x9是1</p>
